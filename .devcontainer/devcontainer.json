@@ -1,0 +1,17 @@
+{
+  "name": "NexusDesk OS",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "containerEnv": {
+    "NEXUSDESK_HOST": "0.0.0.0",
+    "NEXUSDESK_PORT": "9200"
+  },
+  "forwardPorts": [9200],
+  "portsAttributes": {
+    "9200": {
+      "label": "NexusDesk OS",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postCreateCommand": "pip install --no-cache-dir -r requirements.txt && python3 frontend/build.py && (test -f .env || cp .env.example .env)",
+  "postAttachCommand": "echo '🚀 Run: python3 backend/server.py'"
+}
