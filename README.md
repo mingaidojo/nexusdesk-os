@@ -1,71 +1,78 @@
-# Nexus Desk OS
+# NexusDesk OS
 
 > **Autonomous Multi-Instance AI Mission Control & Virtual Office Floor (`v2.0.0`)**  
-> *Developed & maintained by **Nexus Vantage Labs** (`nexusvantagelabs`).*
+> *Open-Source Edition — Developed & maintained by **Nexus Vantage Labs**.*
 
 ---
 
 ## Overview
 
-**Nexus Desk OS** is a self-hosted control plane and visual operations center for multi-agent autonomous AI fleets across **5 CLI engines**: `hermes`, `claude`, `opencode`, `codex`, and `agy`.
+**NexusDesk OS** is a self-hosted control plane and visual operations center for multi-agent autonomous AI fleets across **5 CLI engines**: `hermes`, `claude`, `opencode`, `codex`, and `agy`.
 
-Key capabilities:
-- **AgentFloor (2D Blueprint & HD Isometric Pixel Loft)**: Interactive virtual office canvas where agents work at desks, walk collision-free corridors, gather for conference briefings, and emit real-time activity shouts.
-- **Multi-Agent War Rooms & Roundtable**: Persistent conference rooms with participant whitelists, Teams-style speaker stage, two-phase async background tasks in isolated sandboxes, natural-language reminders, and rotational roundtable deliberation.
-- **1-on-1 Direct Chat & Neural TTS/STT**: Direct console chat per agent with dynamic model selection, artifact quick-view modal, Edge-TTS / Piper-TTS neural voices, and browser Web Speech recognition.
-- **Chat Agents & Sub-Data Studio (`BL-EVO-42`)**: Dedicated Baileys multi-session WhatsApp SIM pairing, native `.xlsx` catalog/catering/orders sync, 5D anti-spam guardrails, and isolated per-agent crons.
-- **Omnichannel Gateways (`BL-SYS-64`)**: WhatsApp & Telegram command routing (`/global` vs `/room`) with strict channel origin isolation.
-- **Crons, Workflows DAG & Self-Evolving Hub**: Visual DAG pipelines, UTC/local schedule management, and autonomous backlog/snapshot rollback tooling.
+### Key Capabilities (Open-Source Edition)
+- **AgentFloor (2D Blueprint & HD Isometric Pixel Loft):** Interactive virtual office canvas where agents work at desks, walk collision-free corridors, and emit real-time activity shouts.
+- **1-on-1 Direct Chat & Neural TTS/STT:** Direct console chat per agent with dynamic model selection, artifact quick-view modal, Edge-TTS neural voices, and browser Web Speech recognition.
+- **War Rooms (OSS Edition):** Persistent conference rooms (**`#general` + up to 3 custom rooms**, up to 3 agents per room) with participant management, speaker stage, and roundtable deliberation.
+- **Workflows DAG & Crons:** Visual multi-step DAG pipelines and UTC/local schedule management.
+- **Memory / Wiki & Tools:** Local memory vault, session history, and MCP tool configuration.
+
+---
+
+## Quickstart
+
+### Option 1: GitHub Codespaces (Fastest)
+1. Click **`<> Code` → `Codespaces` → `Create codespace on main`**.
+2. Once setup completes, run:
+   ```bash
+   python3 backend/server.py
+   ```
+3. Open forwarded port **`9200`** from the **Ports** tab.
+
+### Option 2: Docker Compose
+```bash
+cp .env.example .env
+docker compose up -d --build
+```
+Open `http://127.0.0.1:9200` in Chrome or Edge.
+
+### Option 3: Local Python
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+cp .env.example .env
+python3 frontend/build.py
+python3 backend/server.py
+```
+Open `http://127.0.0.1:9200` in Chrome or Edge.
+
+### Managing as a Systemd Service
+Use [`manage.sh`](manage.sh) for day-to-day daemon operations:
+```bash
+./manage.sh status     # Check service & listening port
+./manage.sh restart    # Reload systemd units + restart nexusdesk
+./manage.sh logs       # Tail live journalctl logs
+./manage.sh build      # Compile frontend bundle
+```
 
 ---
 
 ## Architecture
 
-- **Backend (`backend/`)**: FastAPI + Uvicorn on `:9200`, modularized into domain packages:
-  - `routers/` (`war_room/`, `chat_agents.py`, `gateways.py`, `chat.py`, `fleet.py`, `models.py`, `tts.py`, `workflows.py`, `crons.py`, `self_evolving.py`, `fs.py`, `sessions.py`, `agents.py`, `tools_mcp.py`, `memory_wiki.py`, `auth.py`, `system_storage.py`)
-  - `services/` (`cli_executor.py`, `chat_agents/`, `gateways/`, `war_room/`, `whatsapp/index.js`, `agent_runner.py`, `snapshot_vault.py`, `storage_cleaner.py`)
-- **Frontend (`frontend/`)**: Zero-dependency partial compiler ([`frontend/build.py`](frontend/build.py)) assembling HTML partials (`src/templates/`) and modular JS (`src/js/core/`, `src/js/modules/{floor,chat,chat_agents}/`) into `frontend/dist/index.html`.
+- **Backend (`backend/`):** FastAPI + Uvicorn (configurable via `NEXUSDESK_HOST` / `NEXUSDESK_PORT`, default `127.0.0.1:9200`) with modular domain packages (`routers/`, `services/`, `core/`, `schemas/`) and an optional `backend/plugins/` extension hook.
+- **Frontend (`frontend/`):** Zero-dependency partial compiler ([`frontend/build.py`](frontend/build.py)) assembling HTML partials (`src/templates/`) and modular JS (`src/js/`) into `frontend/dist/index.html`.
 
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for full topology and WebSocket contracts.
-
----
-
-## Quickstart & Operations
-
-### Running Locally
-```bash
-# Build frontend bundle
-python3 frontend/build.py
-
-# Start backend server (using production venv)
-/usr/local/lib/hermes-agent/venv/bin/python backend/server.py
-```
-
-Open `http://127.0.0.1:9200` in Chrome or Edge.
-
-### Managing the Systemd Daemon
-Use [`manage.sh`](manage.sh) for day-to-day daemon operations (handles `systemctl daemon-reload` automatically):
-
-```bash
-./manage.sh status     # Check service & live health
-./manage.sh restart    # Reload systemd units + restart nexusdesk
-./manage.sh logs       # Tail live journalctl logs
-./manage.sh stop       # Stop daemon
-./manage.sh start      # Start daemon
-```
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for topology and WebSocket contracts.
 
 ---
 
 ## Versioning & Documentation
 
-- **Current Version**: [`VERSION`](VERSION) (`2.0.0`) — exposed via `GET /api/version`, `GET /api/system`, and the UI footer.
-- **Release Notes**: [`CHANGELOG.md`](CHANGELOG.md)
-- **Versioning Workflow**: [`docs/VERSIONING_AND_RELEASES.md`](docs/VERSIONING_AND_RELEASES.md) & [`scripts/bump_version.py`](scripts/bump_version.py)
-- **Architecture & Modularization**:
-  - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-  - [`docs/MODULARIZATION_REPORT_202611.md`](docs/MODULARIZATION_REPORT_202611.md)
-  - [`docs/OMNICHANNEL_CONTEXT_ROUTING.md`](docs/OMNICHANNEL_CONTEXT_ROUTING.md)
-  - [`BACKLOG.md`](BACKLOG.md)
+- **Current Version:** [`VERSION`](VERSION) (`2.0.0`)
+- **Release Notes:** [`CHANGELOG.md`](CHANGELOG.md)
+- **Architecture:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- **Versioning Workflow:** [`docs/VERSIONING_AND_RELEASES.md`](docs/VERSIONING_AND_RELEASES.md)
 
 ---
 
