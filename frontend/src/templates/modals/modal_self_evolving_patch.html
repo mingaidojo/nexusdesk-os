@@ -1,0 +1,82 @@
+<!-- MODAL: AUTONOMOUS SELF-PATCHING ENGINE (BL-SYS-22 OPTION B) -->
+  <div id="modal-self-evolving-patch" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[130] hidden flex items-center justify-center p-2.5 sm:p-4 overflow-hidden" onclick="if(event.target===this) closeSelfEvolvingPatchModal()">
+    <div class="bg-[#161b22] border border-indigo-700/80 rounded-2xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden font-mono">
+      <div class="flex justify-between items-center px-4 py-3 border-b border-slate-800 bg-[#0d1117] shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-base">🧬</span>
+          <div class="min-w-0">
+            <h3 class="font-bold text-xs sm:text-sm text-slate-100 font-pixel truncate" id="evo-patch-modal-title">AUTONOMOUS SELF-PATCHING ENGINE</h3>
+            <span class="text-[10px] text-indigo-400 truncate block">Pre-Flight Snapshot Safety & 5s Canary Rollback Verification</span>
+          </div>
+        </div>
+        <button onclick="closeSelfEvolvingPatchModal()" class="text-slate-400 hover:text-white text-lg leading-none p-1 cursor-pointer">&times;</button>
+      </div>
+
+      <div class="p-4 overflow-y-auto flex-1 custom-scrollbar space-y-4 text-xs">
+        <!-- Safety Alert Banner -->
+        <div class="p-3 rounded-xl bg-cyan-950/40 border border-cyan-800/60 text-cyan-300 flex items-start gap-2.5">
+          <span class="text-base shrink-0">🛡️</span>
+          <div class="text-[11px] leading-relaxed">
+            <strong class="font-bold block text-cyan-200">Zero-Downtime Snapshot Safety Guaranteed:</strong>
+            A timestamped tarball archive (`/home/myvirtualcoder/backups/nexusdesk/...`) and safety git branch will be created automatically before any files are modified. If compile checks fail or the canary daemon restart doesn't report healthy HTTP 200 within 5 seconds, changes are rolled back instantly.
+          </div>
+        </div>
+
+        <!-- Target Item Overview -->
+        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
+          <div class="flex justify-between items-center">
+            <span id="patch-item-id-badge" class="text-[10px] px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 font-bold">BL-EVO-XX</span>
+            <span id="patch-item-priority-badge" class="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">HIGH</span>
+          </div>
+          <div id="patch-item-title" class="font-bold text-slate-200 text-xs">Target Backlog Item</div>
+          <div id="patch-item-root-cause" class="text-[11px] text-slate-400 font-sans">Root cause summary...</div>
+        </div>
+
+        <!-- Configuration Form -->
+        <div class="space-y-3">
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Select Execution Agent</label>
+            <select id="patch-agent-select" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono">
+              <option value="Solaris">Solaris (Lead Orchestrator & System Router)</option>
+              <option value="Autonomous Claude">Autonomous Claude (Sonnet 5.5 Spec Engine)</option>
+              <option value="Autonomous OpenCode">Autonomous OpenCode (Deep Engine)</option>
+              <option value="Agy">Agy (Google Antigravity CLI Specialist)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Patch Directive / Specific Instructions (Optional)</label>
+            <textarea id="patch-directive-input" rows="2" placeholder="Leave blank to use default synthesized acceptance criteria..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono"></textarea>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="patch-auto-rollback-check" checked class="w-4 h-4 rounded bg-slate-950 border-slate-800 text-indigo-600 focus:ring-0 cursor-pointer" />
+            <label for="patch-auto-rollback-check" class="text-[11px] text-slate-300 cursor-pointer">
+              Automatically roll back if canary healthcheck fails within 5.0s
+            </label>
+          </div>
+        </div>
+
+        <!-- Live Execution & Verification Terminal Output -->
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-[10px] text-indigo-300 font-bold uppercase">Canary & Verification Terminal</span>
+            <span id="patch-status-pill" class="text-[9px] px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono">IDLE</span>
+          </div>
+          <pre id="patch-terminal-output" class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[11px] font-mono text-emerald-400 max-h-48 overflow-y-auto custom-scrollbar select-text leading-tight">Ready to execute pre-flight snapshot and autonomous verification...</pre>
+        </div>
+      </div>
+
+      <div class="px-4 py-3 border-t border-slate-800 bg-[#0d1117] flex items-center justify-between shrink-0">
+        <button type="button" id="btn-patch-manual-rollback" onclick="rollbackFromActivePatchModal()" class="hidden px-3 py-1.5 rounded-lg bg-rose-950 border border-rose-700 text-rose-300 hover:bg-rose-900 text-xs font-semibold transition cursor-pointer">
+          <span>🔄 Emergency Rollback</span>
+        </button>
+        <div class="flex items-center gap-2 ml-auto">
+          <button type="button" id="btn-run-self-patch" onclick="executeAutonomousPatchFromModal()" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-lg shadow-indigo-950/50 flex items-center gap-1.5 transition cursor-pointer">
+            <span>🚀 Execute Autonomous Patch</span>
+          </button>
+          <button onclick="closeSelfEvolvingPatchModal()" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>

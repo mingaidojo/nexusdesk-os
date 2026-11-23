@@ -1,0 +1,283 @@
+<body class="bg-[#0d1117] text-slate-100 h-dvh flex font-sans overflow-hidden w-full select-none">
+
+  <!-- Mobile Drawer Backdrop Overlay -->
+  <div id="sidebar-backdrop" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-black/70 backdrop-blur-xs z-40 hidden md:hidden transition-opacity"></div>
+
+  <!-- Collapsible Left Sidebar (Tree / Rail) -->
+  <aside id="main-sidebar" class="fixed md:sticky top-0 h-dvh z-50 flex flex-col justify-between bg-[#161b22] border-r border-slate-800 transition-all duration-200 ease-in-out shrink-0 w-64 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none select-none">
+    
+    <!-- Sidebar Top Brand Header -->
+    <div class="h-14 border-b border-slate-800 flex items-center justify-between px-3.5 shrink-0 bg-[#161b22]">
+      <div class="flex items-center gap-2.5 overflow-hidden">
+        <img src="/favicon.svg" alt="Nexus Desk OS" class="w-8 h-8 rounded-xl shrink-0 shadow-[0_0_10px_rgba(6,182,212,0.25)]">
+        <div class="sidebar-label flex flex-col min-w-0 transition-opacity">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs font-bold font-pixel tracking-wider text-emerald-400 truncate">NEXUS DESK OS</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          </div>
+          <span class="text-[8px] text-cyan-400 font-mono tracking-wider truncate">INTELLIGENCE ORCHESTRATED</span>
+        </div>
+      </div>
+
+      <!-- Desktop Collapse Toggle Button -->
+      <button id="btn-toggle-sidebar" onclick="toggleSidebarCollapse()" class="hidden md:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 border border-transparent hover:border-slate-700 transition" title="Collapse / Expand Sidebar">
+        <span id="sidebar-toggle-chevron" class="text-xs font-mono">◀</span>
+      </button>
+
+      <!-- Mobile Close Button -->
+      <button onclick="toggleMobileSidebar(false)" class="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition" title="Close Drawer">
+        ✕
+      </button>
+    </div>
+
+    <!-- Sidebar Navigation Scrollable Body (Collapsible Per Menu with Sub-Menus) -->
+    <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-3.5 scrollbar-none">
+      
+      <!-- Group 1: OPERATIONS (AgentFloor, Call Agent, Fleet Roster, Memory Vault) -->
+      <div class="sidebar-group" data-group="operations">
+        <button type="button" onclick="toggleSidebarGroup('operations')" class="sidebar-group-header w-full flex items-center justify-between text-xs font-mono tracking-wider text-slate-300 hover:text-white px-2.5 py-1.5 font-bold uppercase rounded-lg hover:bg-slate-800/60 transition group">
+          <div class="flex items-center gap-2 min-w-0">
+            <span id="chevron-operations" class="sidebar-group-chevron text-xs text-slate-400 group-hover:text-slate-200 font-mono transition-transform shrink-0">▾</span>
+            <span class="text-sm shrink-0">🕹️</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis font-bold">OPERATIONS</span>
+          </div>
+          <span id="badge-count-operations" class="sidebar-label text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800 font-mono font-semibold shrink-0">4</span>
+        </button>
+        <div id="group-items-operations" class="space-y-0.5 mt-1 pl-1 transition-all">
+          <button onclick="switchMainTab('floor'); closeMobileSidebarIfMobile();" id="nav-btn-floor" data-tab="floor" title="AgentFloor (Office Simulation)" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative bg-emerald-600/20 text-emerald-300 border border-emerald-500/40 shadow-sm">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🏢</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">AgentFloor</span>
+            <span class="sidebar-active-indicator absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('console'); closeMobileSidebarIfMobile();" id="nav-btn-console" data-tab="console" title="Mission Console (Voice & Chat)" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">📞</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Mission Console</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('roster'); closeMobileSidebarIfMobile();" id="nav-btn-roster" data-tab="roster" title="Fleet Roster & Workstations" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">👥</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Fleet Roster</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('memory'); closeMobileSidebarIfMobile();" id="nav-btn-memory" data-tab="memory" title="Memory Vault & Skills Studio" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🏛️</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Memory Vault</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Group 2: INTELLIGENCE & MODELS (Single Tier with Prominent Icons) -->
+      <div class="sidebar-group" data-group="models">
+        <button type="button" onclick="toggleSidebarGroup('models')" class="sidebar-group-header w-full flex items-center justify-between text-xs font-mono tracking-wider text-slate-300 hover:text-white px-2.5 py-1.5 font-bold uppercase rounded-lg hover:bg-slate-800/60 transition group">
+          <div class="flex items-center gap-2 min-w-0">
+            <span id="chevron-models" class="sidebar-group-chevron text-xs text-slate-400 group-hover:text-slate-200 font-mono transition-transform shrink-0">▾</span>
+            <span class="text-sm shrink-0">🔮</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis font-bold">INTELLIGENCE &amp; MODELS</span>
+          </div>
+          <span id="badge-count-models" class="sidebar-label text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800 font-mono font-semibold shrink-0">5</span>
+        </button>
+        <div id="group-items-models" class="space-y-0.5 mt-1 pl-1 transition-all">
+          <button onclick="switchMainTab('models-agents'); closeMobileSidebarIfMobile();" id="nav-btn-models-agents" data-tab="models-agents" title="Agent Roles & Engine Configuration" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🤖</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Agent Roles</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('models-failover'); closeMobileSidebarIfMobile();" id="nav-btn-models-failover" data-tab="models-failover" title="Global Model Failover Chain" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🌐</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Global Failover</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('models-reasoning'); closeMobileSidebarIfMobile();" id="nav-btn-models-reasoning" data-tab="models-reasoning" title="Reasoning Budgets & Thinking Tokens" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">⏱️</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Reasoning Budgets</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('models-memory'); closeMobileSidebarIfMobile();" id="nav-btn-models-memory" data-tab="models-memory" title="Context Meters & Window Utilization" class="sidebar-nav-btn group w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">📊</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Context Meters</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('models-library'); closeMobileSidebarIfMobile();" id="nav-btn-models-library" data-tab="models-library" title="Model Library & Specifications" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">📚</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Model Library</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Group 3: TOOLS & MCP (Single Tier with Dedicated Icons) -->
+      <div class="sidebar-group" data-group="tools">
+        <button type="button" onclick="toggleSidebarGroup('tools')" class="sidebar-group-header w-full flex items-center justify-between text-xs font-mono tracking-wider text-slate-300 hover:text-white px-2.5 py-1.5 font-bold uppercase rounded-lg hover:bg-slate-800/60 transition group">
+          <div class="flex items-center gap-2 min-w-0">
+            <span id="chevron-tools" class="sidebar-group-chevron text-xs text-slate-400 group-hover:text-slate-200 font-mono transition-transform shrink-0">▾</span>
+            <span class="text-sm shrink-0">🔌</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis font-bold">TOOLS &amp; MCP</span>
+          </div>
+          <span id="badge-count-tools" class="sidebar-label text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800 font-mono font-semibold shrink-0">4</span>
+        </button>
+        <div id="group-items-tools" class="space-y-0.5 mt-1 pl-1 transition-all">
+          <button onclick="switchMainTab('tools-matrix'); closeMobileSidebarIfMobile();" id="nav-btn-tools-matrix" data-tab="tools-matrix" title="Agent Tools Privilege Matrix" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🛡️</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Privilege Matrix</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('tools-configured'); closeMobileSidebarIfMobile();" id="nav-btn-tools-configured" data-tab="tools-configured" title="Configured MCP Daemons" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🖥️</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Configured Daemons</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('tools-catalog'); closeMobileSidebarIfMobile();" id="nav-btn-tools-catalog" data-tab="tools-catalog" title="Verified MCP Catalog" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">📦</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Verified Catalog (18)</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button type="button" onclick="openMcpConfigModal(''); closeMobileSidebarIfMobile();" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-cyan-400 hover:text-cyan-200 hover:bg-cyan-950/40 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center font-bold">➕</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">+ Add Custom Server</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Group 4: AUTOMATION (Single Tier with Dedicated Icons & Badges) -->
+      <div class="sidebar-group" data-group="automation">
+        <button type="button" onclick="toggleSidebarGroup('automation')" class="sidebar-group-header w-full flex items-center justify-between text-xs font-mono tracking-wider text-slate-300 hover:text-white px-2.5 py-1.5 font-bold uppercase rounded-lg hover:bg-slate-800/60 transition group">
+          <div class="flex items-center gap-2 min-w-0">
+            <span id="chevron-automation" class="sidebar-group-chevron text-xs text-slate-400 group-hover:text-slate-200 font-mono transition-transform shrink-0">▾</span>
+            <span class="text-sm shrink-0">⚡</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis font-bold">AUTOMATION</span>
+          </div>
+          <span id="badge-count-automation" class="sidebar-label text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800 font-mono font-semibold shrink-0">3</span>
+        </button>
+        <div id="group-items-automation" class="space-y-0.5 mt-1 pl-1 transition-all">
+          <button onclick="switchMainTab('chat-agents'); closeMobileSidebarIfMobile();" id="nav-btn-chat-agents" data-tab="chat-agents" title="Multi-SIM Chat Agents & Sub-Data Workspaces" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">💬</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Chat Agents</span>
+            <span id="sub-count-chat-agents" class="sidebar-label flex items-center gap-1 text-[9px] shrink-0 text-amber-400 font-mono font-semibold">SIM</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('crons'); closeMobileSidebarIfMobile();" id="nav-btn-crons" data-tab="crons" title="Autonomous Cron Pipelines" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">⏰</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Crons</span>
+            <span id="sub-count-crons" class="sidebar-label flex items-center gap-1 text-[9px] shrink-0"></span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('workflows'); closeMobileSidebarIfMobile();" id="nav-btn-workflows" data-tab="workflows" title="Multi-Agent Workflows" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🔀</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Workflows</span>
+            <span id="sub-count-workflows" class="sidebar-label flex items-center gap-1 text-[9px] shrink-0"></span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Group 5: SYSTEM (Single Tier with Dedicated Icons & Status Badges) -->
+      <div class="sidebar-group" data-group="system">
+        <button type="button" onclick="toggleSidebarGroup('system')" class="sidebar-group-header w-full flex items-center justify-between text-xs font-mono tracking-wider text-slate-300 hover:text-white px-2.5 py-1.5 font-bold uppercase rounded-lg hover:bg-slate-800/60 transition group">
+          <div class="flex items-center gap-2 min-w-0">
+            <span id="chevron-system" class="sidebar-group-chevron text-xs text-slate-400 group-hover:text-slate-200 font-mono transition-transform shrink-0">▾</span>
+            <span class="text-sm shrink-0">⚙️</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis font-bold">SYSTEM</span>
+          </div>
+          <span id="badge-count-system" class="sidebar-label text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800 font-mono font-semibold shrink-0">8</span>
+        </button>
+        <div id="group-items-system" class="space-y-0.5 mt-1 pl-1 transition-all">
+          <button onclick="switchMainTab('system-profile'); closeMobileSidebarIfMobile();" id="nav-btn-system-profile" data-tab="system-profile" title="User Profile & Addressing" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-cyan-300 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">👤</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">User Profile</span>
+            <span class="sidebar-label text-[8px] px-1 py-0.2 rounded bg-cyan-950/80 text-cyan-400 border border-cyan-800/70 font-mono shrink-0">PROFILE</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('security'); closeMobileSidebarIfMobile();" id="nav-btn-security" data-tab="security" title="Security & API Keys" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🔑</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1">Access & Keys</span>
+            <span id="sidebar-sec-badge" class="sidebar-label text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 font-mono shrink-0">DEV</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('self-evolving'); closeMobileSidebarIfMobile();" id="nav-btn-self-evolving" data-tab="self-evolving" title="Self-Evolving Hub & Observability" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-emerald-300 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🧬</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1 text-emerald-300/90 font-medium">Self-Evolving Hub</span>
+            <span class="sidebar-label text-[8px] px-1 py-0.2 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/70 font-mono shrink-0">EVOLVE</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('system-dispatcher'); closeMobileSidebarIfMobile();" id="nav-btn-system-dispatcher" data-tab="system-dispatcher" title="War Room Contextual Dispatcher & Routing Settings" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-indigo-300 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🎯</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1 text-indigo-300/90 font-medium">Dispatcher Rules</span>
+            <span class="sidebar-label text-[8px] px-1 py-0.2 rounded bg-indigo-950/80 text-indigo-400 border border-indigo-800/70 font-mono shrink-0">ROUTER</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('system-storage'); closeMobileSidebarIfMobile();" id="nav-btn-system-storage" data-tab="system-storage" title="Storage Clean-Up, Retention & Archives" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-amber-300 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">💾</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1 text-amber-300/90 font-medium">Storage &amp; Archival</span>
+            <span class="sidebar-label text-[8px] px-1 py-0.2 rounded bg-amber-950/80 text-amber-400 border border-amber-800/70 font-mono shrink-0">DISK</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('system-gateways'); closeMobileSidebarIfMobile();" id="nav-btn-system-gateways" data-tab="system-gateways" title="Omnichannel & Outbound Gateways: WhatsApp, Telegram, Email, Webhook, Google Drive" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-sky-300 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">📡</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1 text-sky-300/90 font-medium">Omnichannel &amp; Gateways</span>
+            <span class="sidebar-label text-[8px] px-1 py-0.2 rounded bg-sky-950/80 text-sky-400 border border-sky-800/70 font-mono shrink-0">SYNC</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('system-daemon'); closeMobileSidebarIfMobile();" id="nav-btn-system-daemon" data-tab="system-daemon" title="Daemon Service & Restart" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-rose-300 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">🔄</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1 text-rose-300/90 font-medium">Restart Daemon</span>
+            <span class="sidebar-label text-[8px] px-1 py-0.2 rounded bg-rose-950/80 text-rose-400 border border-rose-800/70 font-mono shrink-0">RELOAD</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+
+          <button onclick="switchMainTab('system-logs'); closeMobileSidebarIfMobile();" id="nav-btn-system-logs" data-tab="system-logs" title="Systemd Service & Journal Logs" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-400 hover:text-emerald-300 hover:bg-slate-800/60 border border-transparent">
+            <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">📋</span>
+            <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1 text-emerald-300/90 font-medium">Systemd Logs</span>
+            <span class="sidebar-label text-[8px] px-1 py-0.2 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/70 font-mono shrink-0">LOGS</span>
+            <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sidebar Bottom Footer -->
+    <div class="border-t border-slate-800/80 p-2.5 bg-[#161b22] shrink-0 space-y-2">
+      <!-- Pinned Help & Feature Playbook Guide -->
+      <button onclick="switchMainTab('guide'); closeMobileSidebarIfMobile();" id="nav-btn-guide" data-tab="guide" title="Feature Guide & Command Playbook (Ctrl+/)" class="sidebar-nav-btn group w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition font-medium text-[11px] text-left relative text-slate-300 hover:text-emerald-300 hover:bg-slate-800/60 border border-transparent">
+        <span class="text-xs shrink-0 flex items-center justify-center w-4 text-center">📖</span>
+        <span class="sidebar-label whitespace-nowrap overflow-hidden text-ellipsis flex-1 font-semibold">Help &amp; Guide</span>
+        <span class="sidebar-label text-[8px] px-1 py-0.2 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800/70 font-mono shrink-0">DOCS</span>
+        <span class="sidebar-active-indicator hidden absolute right-2 w-1.5 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+      </button>
+
+      <!-- Active Fleet Node Indicator (Clickable to switch instance) -->
+      <button type="button" onclick="toggleFleetDropdown()" class="w-full bg-slate-950/80 hover:bg-slate-900 px-2.5 py-1.5 rounded-lg border border-slate-800/90 flex items-center justify-between text-left transition group cursor-pointer" title="Click to switch instance">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0" id="sidebar-fleet-dot"></span>
+          <span class="sidebar-label text-[10px] font-mono font-semibold text-slate-300 truncate" id="sidebar-fleet-label">FLEET: BIBLESTORYAPP</span>
+        </div>
+        <span class="sidebar-label text-[9px] text-emerald-400 font-mono font-bold shrink-0" id="sidebar-fleet-badge">PROD</span>
+      </button>
+
+      <!-- Bottom Rail Collapse Toggle -->
+      <button onclick="toggleSidebarCollapse()" class="hidden md:flex items-center justify-center gap-2 w-full py-1.5 px-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 text-xs font-mono transition border border-transparent hover:border-slate-800">
+        <span id="sidebar-bottom-toggle-icon" class="text-xs font-mono">◀</span>
+        <span id="sidebar-bottom-toggle-text" class="sidebar-label">Collapse Rail</span>
+      </button>
+    </div>
+
+  </aside>

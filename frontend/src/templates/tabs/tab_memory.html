@@ -1,0 +1,98 @@
+<div id="tab-memory" class="hidden flex flex-col gap-4">
+      
+      <!-- Top Mode Switcher Bar: Workspace Memory vs Agent Skills Studio -->
+      <div class="bg-[#161b22]/95 border border-slate-800/90 p-2.5 rounded-xl flex flex-wrap items-center justify-between gap-2 shadow-lg">
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" id="btn-mode-memory-files" onclick="switchMemoryStudioMode('files')" class="px-3.5 py-1.5 rounded-lg bg-cyan-900/60 border border-cyan-500/80 text-xs font-mono text-cyan-200 font-bold transition flex items-center gap-1.5 shadow-sm">
+            <span>📁</span> <span>Workspace Memory Files</span>
+          </button>
+          <button type="button" id="btn-mode-skills-studio" onclick="switchMemoryStudioMode('skills')" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-amber-300 transition flex items-center gap-1.5">
+            <span>🛠️</span> <span>Agent Skills Studio (SKILL.md)</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-2 text-[11px] font-mono text-slate-400">
+          <span id="skills-studio-summary-badge" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-cyan-400">Mode: Workspace Files</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 min-h-[680px]">
+        <!-- Left Explorer Column -->
+        <div class="lg:col-span-4 bg-[#161b22] border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col max-h-[720px]">
+          <div class="flex justify-between items-center mb-3">
+            <h2 id="memory-explorer-title" class="text-xs font-bold text-slate-200 font-pixel">MEMORY EXPLORER</h2>
+            <span id="memory-explorer-subtitle" class="text-[10px] text-cyan-400 font-mono">WORKSPACE FILES</span>
+          </div>
+
+          <div id="memory-agent-pills" class="flex flex-wrap gap-1.5 pb-3 border-b border-slate-800 mb-3"></div>
+
+          <!-- Search Filter for Files / Skills -->
+          <div class="mb-2.5">
+            <input id="memory-skill-search" type="text" oninput="filterMemoryOrSkillsList(this.value)" placeholder="Filter files or skills..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-500" />
+          </div>
+
+          <div id="memory-file-list" class="flex-1 overflow-y-auto flex flex-col gap-1.5 pr-1 font-mono text-xs">
+            <div class="text-slate-500 text-xs">Loading workspace files...</div>
+          </div>
+        </div>
+
+        <!-- Right Editor & Ground-Truth Inspector Column -->
+        <div class="lg:col-span-8 bg-[#161b22] border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col max-h-[720px]">
+          <div class="flex flex-wrap justify-between items-center gap-3 pb-3 border-b border-slate-800 mb-3">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <span id="editor-filename" class="font-mono text-sm font-semibold text-emerald-400 truncate">MEMORY.md</span>
+                <span id="editor-scope-badge" class="hidden text-[9px] font-mono px-2 py-0.5 rounded bg-slate-900 text-cyan-300 border border-slate-700 uppercase">GLOBAL SKILL</span>
+                <span id="editor-save-toast" class="text-[10px] text-emerald-400 font-mono hidden bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">Saved to disk!</span>
+              </div>
+              <span id="editor-filepath" class="text-[11px] text-slate-500 font-mono block truncate mt-0.5">/home/agents_bs/workspace/orchestrator/memory/MEMORY.md</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+              <!-- AI Tidy & Deduplicate Skill Button (BL-AUTO-37) -->
+              <button type="button" id="btn-skill-tidy-ai" onclick="openSkillTidyModal()" class="hidden px-3 py-1.5 rounded-lg border border-cyan-800 bg-cyan-950/70 hover:bg-cyan-900 text-cyan-300 text-xs font-mono font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm" title="Use AI Architect to tidy, deduplicate and refactor SKILL.md with visual diff review">
+                <span>🧹</span>
+                <span>AI Tidy Skill</span>
+              </button>
+
+              <!-- Skill Lock / Auto-Evolve Toggle Button (Visible in Skills Studio Mode) -->
+              <button type="button" id="btn-skill-lock-toggle" onclick="toggleActiveSkillLock()" class="hidden px-3 py-1.5 rounded-lg border text-xs font-mono font-bold transition flex items-center gap-1.5 cursor-pointer" title="Toggle permanent read-only lock (chmod 0444 + user_locked: true) so agents cannot overwrite calibrated rules">
+                <span id="skill-lock-icon">🔓</span>
+                <span id="skill-lock-label">AUTO-EVOLVE (Hermes Managed)</span>
+              </button>
+
+              <button type="button" onclick="toggleEditorPreview()" id="btn-preview-toggle" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition">
+                Split / Preview
+              </button>
+              <button type="button" onclick="saveActiveFileContent()" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow transition">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                <span id="btn-save-file-label">Save File</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Ground-Truth Target Inspector Bar (Highlights IDs, GDrive folders, paths & flags) -->
+          <div id="ground-truth-inspector" class="mb-3 bg-slate-950/90 border border-slate-800/90 rounded-lg p-2.5">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                <span>🎯</span> <span>Target Ground-Truth Inspector (Active IDs, Folders & Endpoints)</span>
+              </span>
+              <span id="ground-truth-count" class="text-[10px] font-mono text-slate-500">0 targets detected</span>
+            </div>
+            <div id="ground-truth-pills" class="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto">
+              <span class="text-[11px] font-mono text-slate-500">Select a file or skill to inspect calibrated target IDs and paths.</span>
+            </div>
+          </div>
+
+          <!-- Main Editor / Split Preview Area -->
+          <div id="editor-panes-wrapper" class="flex-1 grid grid-cols-1 gap-3 overflow-hidden relative min-h-[420px]">
+            <textarea id="editor-textarea" oninput="onEditorContentChange()" class="w-full h-full bg-[#0d1117] border border-slate-800 rounded-lg p-3.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-500 select-text leading-relaxed resize-none"></textarea>
+            <div id="editor-preview" class="w-full h-full bg-[#0d1117] border border-slate-800 rounded-lg p-5 overflow-y-auto markdown-body select-text hidden"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+        <!-- ============================================================== -->
+    <!-- DEDICATED PAGE 1: 🔌 TOOLS & MCP: PRIVILEGE MATRIX -->
+    <!-- ============================================================== -->

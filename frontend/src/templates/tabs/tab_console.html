@@ -1,0 +1,506 @@
+<div id="tab-console" class="hidden flex flex-col gap-2.5 flex-1 min-h-0 h-full overflow-hidden transition-all duration-200">
+      
+      <!-- Console Sub-Navigation: Dynamic Multi-Tab Chat Room Bar (BL-CHAT-28) -->
+      <div class="flex items-center justify-between bg-[#161b22] border border-slate-800 rounded-xl px-3 py-1.5 shrink-0 shadow-lg gap-2 overflow-hidden">
+        <!-- Room Tabs Row with Scrollable Container -->
+        <div class="flex items-center gap-1.5 min-w-0 flex-1 overflow-x-auto custom-scrollbar pr-1" id="console-room-tabs-bar">
+          <!-- Dynamically populated room tabs -->
+        </div>
+
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0 pl-1 border-l border-slate-800/80">
+          <!-- Continuous Bi-Directional Hands-Free Voice Loop Toggle (BL-VOICE-24) -->
+          <button type="button" id="btn-warroom-bidir-voice" onclick="toggleHandsFreeVoice()" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono font-semibold flex items-center gap-1 transition cursor-pointer shadow-sm whitespace-nowrap" title="Toggle continuous bi-directional voice loop">
+            <span>🎙️</span>
+            <span id="warroom-bidir-label" class="text-slate-300 font-mono text-[11px] hidden sm:inline">bi-direct</span>
+            <span id="warroom-bidir-dot" class="w-2 h-2 rounded-full bg-black border border-slate-700"></span>
+          </button>
+
+          <!-- Voice & Synthesizer Settings Trigger (Relocated to Console Sub-Nav) -->
+          <button type="button" onclick="toggleMobileVoiceSettingsModal()" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-cyan-400 border border-slate-700/80 text-xs font-mono transition flex items-center gap-1 cursor-pointer shrink-0 shadow-sm" title="Voice & Synthesizer Settings">
+            <span>🔊</span> <span class="hidden sm:inline text-[11px]">Voice</span>
+          </button>
+
+          <!-- + Add Tab Button with Dropdown -->
+          <div class="relative" id="new-room-dropdown-wrapper">
+            <button type="button" onclick="toggleNewRoomDropdown()" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-mono font-bold flex items-center gap-1 transition cursor-pointer" title="Open new chat tab or new war room discussion">
+              <span class="text-emerald-400 font-bold">+</span>
+              <span class="hidden sm:inline">New Room</span>
+            </button>
+            <div id="new-room-dropdown" class="hidden nexus-popover-menu absolute left-0 sm:right-0 sm:left-auto top-full mt-1.5 w-60 p-1.5 z-50 text-xs font-mono">
+              <button onclick="createNewDirectChatTabPrompt()" class="w-full text-left p-2 rounded-lg hover:bg-slate-800/80 text-slate-200 flex items-center gap-2 transition cursor-pointer">
+                <span>💬</span>
+                <div>
+                  <div class="font-bold text-slate-100">1-on-1 Agent Chat</div>
+                  <div class="text-[10px] text-slate-400">Direct dedicated session</div>
+                </div>
+              </button>
+              <button onclick="createNewWarRoomTabPrompt()" class="w-full text-left p-2 rounded-lg hover:bg-slate-800/80 text-slate-200 flex items-center gap-2 transition cursor-pointer">
+                <span>👥</span>
+                <div>
+                  <div class="font-bold text-slate-100">New War Room Tab</div>
+                  <div class="text-[10px] text-slate-400">Multi-agent roundtable debate</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW A: DIRECT 1-ON-1 CHAT -->
+      <div id="console-direct-view" class="flex flex-col flex-1 min-h-0 h-full overflow-hidden">
+        
+        <!-- Full-Width Live Chat Stage (BL-UI-51 Option A: Agent Dropdown in Header, Reclaiming 100% Width) -->
+        <div id="console-chat-column" class="flex flex-col flex-1 bg-[#161b22] border border-slate-800 rounded-xl p-2.5 sm:p-4 shadow-xl h-full min-h-0 overflow-hidden min-w-0">
+          
+          <!-- Top Chat Header Bar (Always pinned & responsive single-line) -->
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800 gap-1.5 sm:gap-2 shrink-0 min-w-0">
+            <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0 flex-1">
+              
+              <!-- BL-UI-51: Unified Agent Capsule with Dropdown Switcher (Zero Redundancy) -->
+              <div class="relative shrink-0" id="direct-agent-dropdown-wrapper">
+                <button type="button" onclick="toggleDirectAgentDropdown(event)" id="direct-agent-dropdown-btn" class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700/80 hover:border-emerald-500 text-slate-100 font-mono text-xs transition cursor-pointer shadow-sm group">
+                  <div id="chat-agent-avatar" class="w-6 h-6 rounded-md bg-emerald-500/20 border border-emerald-500 flex items-center justify-center font-bold text-emerald-400 text-xs shrink-0 font-sans">S</div>
+                  <div class="flex items-center gap-1.5 min-w-0">
+                    <span id="chat-agent-name" class="font-bold text-xs sm:text-sm text-white truncate max-w-[90px] sm:max-w-[140px]">Solaris</span>
+                    <span id="chat-agent-engine" class="text-[8.5px] sm:text-[9px] font-mono px-1 py-0.5 rounded font-bold uppercase bg-emerald-950 text-emerald-300 border border-emerald-800 shrink-0">[HERMES]</span>
+                  </div>
+                  <span class="text-[9px] text-emerald-400 group-hover:text-emerald-300 transition-transform">▾</span>
+                </button>
+
+                <!-- Dropdown Popover List of Fleet Agents -->
+                <div id="direct-agent-dropdown-menu" class="hidden nexus-popover-menu absolute left-0 top-full mt-1.5 w-64 p-1.5 z-50 font-mono text-xs">
+                  <div class="px-2.5 py-1 text-[9px] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800 flex justify-between items-center mb-1">
+                    <span>SWITCH 1-ON-1 AGENT</span>
+                    <span id="direct-agent-count-badge" class="text-cyan-400">FLEET</span>
+                  </div>
+                  <div id="direct-agent-dropdown-items" class="space-y-1 max-h-60 overflow-y-auto custom-scrollbar">
+                    <!-- Populated dynamically by renderConsoleAgentCards() -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- BL-MOD-31: 1-on-1 Direct Chat Per-Engine LLM Selector (Shortened & space-optimized) -->
+              <div class="flex items-center bg-slate-900/90 border border-slate-700/80 hover:border-cyan-500/80 rounded px-1.5 sm:px-2 py-1 transition shrink-0 max-w-[110px] sm:max-w-[145px]" title="Switch active LLM behind this agent">
+                <span class="text-[9px] mr-1 shrink-0">🧠</span>
+                <select id="chat-agent-model-select" onchange="changeDirectChatAgentModel(this.value)" class="bg-transparent text-[9px] sm:text-[10px] font-mono text-cyan-300 font-semibold focus:outline-none cursor-pointer max-w-[80px] sm:max-w-[110px] truncate">
+                  <option value="">Default Model</option>
+                </select>
+              </div>
+
+              <span id="chat-agent-state" class="text-[8px] sm:text-[9px] font-mono px-1.5 sm:px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 shrink-0">READY</span>
+              <span id="chat-agent-role" class="text-[10px] text-slate-400 font-mono hidden 2xl:inline truncate max-w-[140px]" title="Agent Role">Orchestrator</span>
+            </div>
+
+            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
+              <span class="text-[9px] font-mono px-2 py-1 rounded bg-slate-900 border border-slate-800 text-emerald-400 items-center gap-1.5 hidden 2xl:flex" title="Conversations persist across multiple turns for each agent">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>MEMORY ON</span>
+              </span>
+
+              <!-- BL-VOICE-23: Unified Sound & Microphone Cluster in Chat Header (BL-UI-54) -->
+              <span id="voice-loop-state-pill" class="hidden px-2.5 py-1 rounded-lg bg-rose-950/90 border border-rose-600 text-rose-300 text-[10px] font-mono font-bold flex items-center gap-1.5 whitespace-nowrap">
+                <span id="voice-loop-state-dot" class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping"></span>
+                <span id="voice-loop-state-text">🎙️ LISTENING...</span>
+              </span>
+
+              <button onclick="toggleConsoleSpaciousMode()" class="btn-console-spacious hidden xl:flex px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 text-xs font-mono transition items-center gap-1 cursor-pointer shrink-0" title="Toggle Full-Height Spacious View">
+                <span>⛶</span> <span class="label-console-spacious hidden lg:inline">Expand</span>
+              </button>
+              <button onclick="openExportModal('direct')" class="hidden xl:flex px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-700/80 text-xs font-mono transition items-center gap-1 cursor-pointer shrink-0" title="Save Session Snapshot or Export Transcript">
+                <span>💾</span> <span class="hidden lg:inline">Save</span>
+              </button>
+              
+              <!-- Direct Chat Actions Dropdown Menu -->
+              <div class="relative inline-block text-left shrink-0" id="direct-chat-more-menu-container">
+                <button type="button" onclick="toggleDirectChatActionsMenu(event)" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 text-xs font-mono transition flex items-center gap-1 cursor-pointer" title="More Actions">
+                  <span>⚙️</span> <span class="hidden sm:inline">Actions</span> <span>▾</span>
+                </button>
+                <div id="direct-chat-actions-dropdown" class="hidden nexus-popover-menu absolute right-0 mt-1.5 w-44 py-1 z-50 font-mono text-xs flex flex-col">
+                  <button type="button" onclick="openExportModal('direct'); hideDirectChatActionsMenu();" class="xl:hidden w-full text-left px-3 py-2 text-emerald-400 hover:bg-slate-800 flex items-center gap-2 transition cursor-pointer">
+                    <span>💾</span> <span>Save / Export</span>
+                  </button>
+                  <button type="button" onclick="toggleConsoleSpaciousMode(); hideDirectChatActionsMenu();" class="xl:hidden w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition cursor-pointer">
+                    <span>⛶</span> <span>Expand / Contract View</span>
+                  </button>
+                  <div class="border-t border-slate-800 my-1 xl:hidden"></div>
+                  <button type="button" onclick="clearCurrentChat(false); hideDirectChatActionsMenu();" class="w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition cursor-pointer">
+                    <span>🧹</span> <span>Clear Display</span>
+                  </button>
+                  <button type="button" onclick="clearCurrentChat(true); hideDirectChatActionsMenu();" class="w-full text-left px-3 py-2 text-rose-400 hover:bg-rose-950/60 flex items-center gap-2 transition cursor-pointer">
+                    <span>⚡</span> <span>Reset Brain Memory</span>
+                  </button>
+                  <div class="border-t border-slate-800 my-1"></div>
+                  <button type="button" onclick="confirmRestartNexusDesk(); hideDirectChatActionsMenu();" class="w-full text-left px-3 py-2 text-slate-300 hover:bg-rose-950/60 hover:text-rose-300 flex items-center gap-2 transition cursor-pointer">
+                    <span>🔄</span> <span>Restart Daemon</span>
+                  </button>
+                </div>
+              </div>
+
+              <canvas id="waveformCanvas" width="80" height="20" class="rounded bg-slate-950/80 border border-emerald-500/50 hidden"></canvas>
+            </div>
+          </div>
+
+          <!-- Chat Conversation Messages (Internal auto-scroll only, maximized height) -->
+          <div id="chat-conversation" class="flex-1 overflow-y-auto py-3 flex flex-col gap-3 pr-2 select-text font-sans min-h-0 custom-scrollbar">
+          </div>
+
+          <!-- Active Speaker / Thinking Status Banner (BL-MOD-34: Bottom-docked above input, matching War Room) -->
+          <div id="chat-status-banner" class="hidden relative py-1.5 px-3 mb-1.5 rounded-lg bg-emerald-950/70 border border-emerald-700/80 text-emerald-300 text-[11px] font-mono flex items-center justify-between shrink-0 shadow-sm overflow-hidden">
+            <div class="flex items-center gap-2 z-10 min-w-0">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0"></span>
+              <span id="chat-status-text" class="truncate font-semibold text-emerald-200">Agent executing directive...</span>
+              <span id="chat-status-timer" class="text-[10px] text-emerald-400/90 font-mono bg-emerald-900/60 px-1.5 py-0.2 rounded border border-emerald-600/50" title="Time remaining before 720s timeout">720s left</span>
+            </div>
+            <span class="text-[9px] uppercase tracking-wider text-emerald-400 font-bold font-mono z-10 shrink-0">ACTIVE REASONING</span>
+            <!-- Infinite Shimmer Wave -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/15 to-transparent animate-shimmer pointer-events-none"></div>
+          </div>
+
+          <!-- Pinned Bottom Input & Send Bar (Always visible in viewport) -->
+          <div class="pt-2.5 border-t border-slate-800 flex flex-col gap-1.5 shrink-0 bg-[#161b22]" ondragover="handleChatDragOver(event, 'direct')" ondragleave="handleChatDragLeave(event, 'direct')" ondrop="handleChatFileDrop(event, 'direct')" id="chat-drop-zone">
+            <!-- File Attachment Preview Pill Ribbon (BL-WAR-10: Multi-File Batch Support up to 5 files) -->
+            <div id="chat-attachment-ribbon" class="hidden flex flex-wrap items-center gap-1.5 px-1 py-0.5 text-xs">
+              <!-- Populated dynamically by renderChatAttachmentRibbon('direct') -->
+            </div>
+            <div class="flex items-end gap-2">
+              <input type="file" id="chat-file-input" class="hidden" multiple onchange="handleChatFileUpload(event, 'direct')" />
+              <button type="button" onclick="document.getElementById('chat-file-input').click()" class="p-2 h-[38px] rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer shrink-0" title="Attach up to 5 files / any format without restriction (max 100MB each, 250MB total) or drag & drop">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+              </button>
+              <button id="btn-single-mic" onclick="toggleSingleVoiceDictate()" class="p-2 h-[38px] rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition shrink-0" title="Voice Dictation">
+                <svg id="single-mic-icon" class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 02-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+              </button>
+              <textarea id="chat-text-input" rows="1" placeholder="Send instructions to agent (Ctrl+Enter to Send, Shift+Enter to Interrupt)..." 
+                     oninput="autoResizeTextarea(this, event)"
+                     onkeydown="if(event.key==='Enter' && event.shiftKey && typeof isAgentTurnInFlight !== 'undefined' && isAgentTurnInFlight) { event.preventDefault(); handleDirectChatInterruptClick(); } else if(event.key==='Enter' && (event.ctrlKey || event.metaKey)) { event.preventDefault(); sendConsoleChat(); }"
+                     class="flex-1 min-h-[38px] max-h-[130px] resize-none bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono leading-relaxed custom-scrollbar"></textarea>
+              <button onclick="handleDirectChatInterruptClick()" id="btn-interrupt-console" class="hidden px-2.5 sm:px-3.5 h-[38px] bg-rose-700 hover:bg-rose-600 text-white rounded-lg text-xs font-semibold items-center gap-1 sm:gap-1.5 transition shrink-0 cursor-pointer shadow-sm animate-pulse" title="Interrupt active agent turn immediately (Shift+Enter)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                <span class="hidden sm:inline">Interrupt</span>
+              </button>
+              <button onclick="sendConsoleChat()" id="btn-send-console" class="w-10 sm:w-11 h-[38px] bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg flex items-center justify-center transition shrink-0 cursor-pointer shadow-md group" title="Send (Ctrl+Enter)">
+                <svg class="w-4 h-4 transform rotate-[-45deg] translate-x-0.5 -translate-y-0.5 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW B: MULTI-AGENT CONFERENCE WAR ROOM (ROOM 2) -->
+      <div id="console-warroom-view" class="hidden flex flex-col flex-1 bg-[#161b22] border border-slate-800 rounded-xl p-2.5 sm:p-3.5 shadow-xl min-h-0 overflow-hidden">
+        <!-- War Room Pinned Header (Single-line & tidy - BL-UI-49 Mobile Ergonomics & BL-EVO-39 Safe Space) -->
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800 gap-2 shrink-0 flex-nowrap min-w-0">
+          <!-- Left: Compact Conversation Search Box & Dedicated Sandbox Storage Badge -->
+          <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1 overflow-hidden">
+            <div id="warroom-search-wrapper" class="relative flex items-center w-20 sm:w-36 md:w-44 min-w-0 shrink">
+              <span class="absolute left-2 text-slate-500 text-xs pointer-events-none">🔍</span>
+              <input id="warroom-search-input" type="text" placeholder="Search..." 
+                     oninput="handleWarRoomSearch(this.value)"
+                     onkeydown="handleWarRoomSearchKeydown(event)"
+                     class="w-full bg-slate-950/90 border border-slate-800 hover:border-slate-700 focus:border-cyan-500 rounded-lg pl-6 pr-5 py-1 text-[11px] text-white placeholder-slate-500 font-mono transition outline-none" />
+              <div id="warroom-search-controls" class="hidden absolute right-1.5 flex items-center gap-0.5 text-[10px] font-mono">
+                <span id="warroom-search-counter" class="text-cyan-400 font-bold text-[9.5px] px-0.5">0/0</span>
+                <button type="button" onclick="navigateWarRoomSearch(-1)" class="text-slate-400 hover:text-white px-0.5 cursor-pointer leading-none" title="Previous match (Shift+Enter)">▲</button>
+                <button type="button" onclick="navigateWarRoomSearch(1)" class="text-slate-400 hover:text-white px-0.5 cursor-pointer leading-none" title="Next match (Enter)">▼</button>
+                <button type="button" onclick="clearWarRoomSearch()" class="text-slate-500 hover:text-rose-400 px-0.5 cursor-pointer leading-none" title="Clear search (Esc)">✕</button>
+              </div>
+            </div>
+
+            <!-- Dedicated Sandbox Storage Pill (Never overlaps search bar) -->
+            <button id="btn-warroom-files-sidecar" onclick="toggleWarRoomFilesSidecar()" class="px-2 py-1 rounded-lg bg-sky-950/80 hover:bg-sky-900 border border-sky-800/70 text-sky-300 text-xs font-mono flex items-center gap-1 sm:gap-1.5 transition cursor-pointer shadow-sm shrink-0" title="Toggle Live Deliverables & Sandbox File Explorer • Click to view files & storage">
+              <span>📁</span>
+              <span id="warroom-files-count-badge" class="font-mono text-white font-bold">0</span>
+              <span class="text-sky-400/80 font-normal hidden sm:inline text-[10px]">files</span>
+              <span class="text-slate-600 hidden md:inline">•</span>
+              <span id="warroom-storage-pill" class="text-sky-300 text-[10px] font-normal font-mono hidden md:inline">0 MB</span>
+            </button>
+          </div>
+
+          <!-- Right: Safe-Spaced Icon-Only Action Cluster with Informative Tooltips (BL-EVO-39) -->
+          <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
+            <button id="btn-warroom-reminders" onclick="openWarRoomRemindersModal()" class="h-7 sm:h-8 px-2 rounded-lg bg-slate-900 hover:bg-amber-950/80 text-amber-300 border border-slate-700/80 hover:border-amber-500/70 text-xs flex items-center justify-center gap-1 transition cursor-pointer shadow-sm shrink-0 relative" title="War Room Scheduler, Reminders & Async Background Jobs">
+              <span>⏰</span>
+              <span id="warroom-reminders-count" class="hidden text-[10px] font-mono font-bold text-[#58a6ff]">0</span>
+              <span id="warroom-reminders-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 border border-slate-900 animate-pulse"></span>
+            </button>
+            <button id="btn-warroom-memory" onclick="openWarRoomMemoryModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-950/80 hover:bg-purple-900 text-purple-300 border border-purple-700/80 text-xs flex items-center justify-center transition cursor-pointer shadow-sm shrink-0" title="War Room Shared Memory & Context Compaction Inspector (Memory)">
+              <span>🧠</span>
+            </button>
+            <button type="button" onclick="openInviteAgentModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-950 hover:bg-emerald-900 border border-emerald-700/80 text-emerald-300 text-xs flex items-center justify-center transition cursor-pointer shadow-sm shrink-0" title="Manage Room Agents & Panelists (Agents)">
+              <span>🤖</span>
+            </button>
+            <button type="button" onclick="toggleTeamsStageView()" id="btn-toggle-teams-stage" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-cyan-950 hover:bg-cyan-900 border border-cyan-700/80 text-cyan-300 text-xs flex items-center justify-center transition cursor-pointer shadow-sm shrink-0" title="Toggle MS Teams Video/Avatar Stage Layout (Stage)">
+              <span>👥</span>
+            </button>
+
+            <!-- War Room Actions Dropdown Menu -->
+            <div class="relative inline-block text-left" id="warroom-more-menu-container">
+              <button type="button" onclick="toggleWarRoomActionsMenu(event)" class="h-7 sm:h-8 px-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 text-xs font-mono transition flex items-center gap-1 cursor-pointer shadow-sm" title="More Room Actions: Export, Clear, Settings">
+                <span>⚙️</span> <span class="text-[9px] text-slate-400">▾</span>
+              </button>
+              <div id="warroom-actions-dropdown" class="hidden nexus-popover-menu absolute right-0 mt-1.5 w-52 py-1 z-50 font-mono text-xs flex flex-col">
+                <button type="button" onclick="openWarRoomChatBridgeModal(); hideWarRoomActionsMenu();" class="w-full text-left px-3 py-2 text-emerald-300 hover:bg-slate-800 flex items-center gap-2 transition cursor-pointer">
+                  <span>🔗</span> <span>Link Chat Workspace</span>
+                </button>
+                <button type="button" onclick="openWarRoomSandboxModal(); hideWarRoomActionsMenu();" class="md:hidden w-full text-left px-3 py-2 text-sky-400 hover:bg-slate-800 flex items-center gap-2 transition cursor-pointer">
+                  <span>💾</span> <span>Room Sandbox Storage</span>
+                </button>
+                <button type="button" onclick="openWarRoomRemindersModal(); hideWarRoomActionsMenu();" class="xl:hidden w-full text-left px-3 py-2 text-amber-300 hover:bg-slate-800 flex items-center gap-2 transition cursor-pointer">
+                  <span>⏰</span> <span>Agent Reminders</span>
+                </button>
+                <button type="button" onclick="openExportModal('warroom'); hideWarRoomActionsMenu();" class="xl:hidden w-full text-left px-3 py-2 text-cyan-300 hover:bg-slate-800 flex items-center gap-2 transition cursor-pointer">
+                  <span>💾</span> <span>Save Transcript</span>
+                </button>
+                <button type="button" onclick="toggleConsoleSpaciousMode(); hideWarRoomActionsMenu();" class="xl:hidden w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition cursor-pointer">
+                  <span>⛶</span> <span>Expand / Contract View</span>
+                </button>
+                <div class="border-t border-slate-800 my-1 xl:hidden"></div>
+                <button type="button" onclick="clearWarRoomHistory(false); hideWarRoomActionsMenu();" class="w-full text-left px-3 py-2 text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition cursor-pointer">
+                  <span>🧹</span> <span>Clear Room Display</span>
+                </button>
+                <button type="button" onclick="clearWarRoomHistory(true); hideWarRoomActionsMenu();" class="w-full text-left px-3 py-2 text-rose-400 hover:bg-rose-950/60 flex items-center gap-2 transition cursor-pointer">
+                  <span>⚡</span> <span>Reset Room Brain Memory</span>
+                </button>
+                <button type="button" onclick="deleteActiveWarRoom(); hideWarRoomActionsMenu();" class="w-full text-left px-3 py-2 text-rose-400 hover:bg-rose-950/60 flex items-center gap-2 transition cursor-pointer">
+                  <span>🗄️</span> <span>Archive &amp; Delete Room</span>
+                </button>
+                <div class="border-t border-slate-800 my-1"></div>
+                <button type="button" onclick="confirmRestartNexusDesk(); hideWarRoomActionsMenu();" class="w-full text-left px-3 py-2 text-slate-300 hover:bg-rose-950/60 hover:text-rose-300 flex items-center gap-2 transition cursor-pointer">
+                  <span>🔄</span> <span>Restart Daemon</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MS Teams Video Conference Stage Grid (BL-CHAT-32) -->
+        <div id="warroom-teams-stage" class="hidden py-2 px-1 border-b border-slate-800/80 bg-slate-950/60 shrink-0">
+          <div id="warroom-teams-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+            <!-- Dynamically populated video tiles for participants + Operator Min -->
+          </div>
+        </div>
+
+        <!-- War Room Middle Stage Area: Conversation Thread + Collapsible Files Sidecar (BL-UI-50) -->
+        <div class="flex-1 flex min-h-0 overflow-hidden gap-2">
+          <!-- Main Conversation Thread (Maximized vertical height) -->
+          <div id="warroom-conversation" class="flex-1 overflow-y-auto py-3 flex flex-col gap-3 pr-2 select-text font-sans min-h-0 custom-scrollbar">
+            <!-- Populated dynamically by loadWarRoomMessages() -->
+          </div>
+
+          <!-- BL-UI-50: In-Room Live Deliverables & Sandbox File Explorer Sidecar -->
+          <div id="warroom-files-sidecar" class="hidden w-full sm:w-[440px] lg:w-[520px] flex flex-col bg-slate-950/95 border border-slate-800 rounded-xl shadow-xl overflow-hidden shrink-0 transition-all">
+            <!-- Sidecar Header -->
+            <div class="px-3 py-2 bg-[#0d1117] border-b border-slate-800 flex items-center justify-between shrink-0">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span class="text-sky-400 text-sm">📁</span>
+                <span class="font-bold text-xs text-slate-100 font-pixel tracking-wide truncate">SANDBOX DELIVERABLES</span>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                <button type="button" onclick="refreshWarRoomFilesSidecar()" class="text-slate-400 hover:text-sky-300 p-1 rounded transition text-xs cursor-pointer" title="Refresh files list">🔄</button>
+                <button type="button" onclick="toggleWarRoomFilesSidecar()" class="text-slate-400 hover:text-white p-1 rounded transition text-sm cursor-pointer" title="Close Sidecar">&times;</button>
+              </div>
+            </div>
+
+            <!-- Category Filter Tabs & Search -->
+            <div class="p-2 border-b border-slate-800/80 bg-slate-900/60 flex flex-col gap-1.5 shrink-0">
+              <div class="flex items-center gap-1 font-mono text-[10.5px]">
+                <button type="button" onclick="setWarRoomFilesCategory('all')" id="btn-sidecar-cat-all" class="flex-1 py-1 px-1.5 rounded bg-sky-950 text-sky-300 border border-sky-700 font-bold text-center cursor-pointer">All Files</button>
+                <button type="button" onclick="setWarRoomFilesCategory('deliverables')" id="btn-sidecar-cat-deliv" class="flex-1 py-1 px-1.5 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-center cursor-pointer">Deliverables</button>
+                <button type="button" onclick="setWarRoomFilesCategory('scratch')" id="btn-sidecar-cat-scratch" class="flex-1 py-1 px-1.5 rounded bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 text-center cursor-pointer">Scratch</button>
+                <button type="button" onclick="pruneWarRoomScratchFiles()" id="btn-sidecar-prune-scratch" class="py-1 px-2 rounded bg-amber-950/80 hover:bg-amber-900 text-amber-300 border border-amber-700/80 font-bold text-center cursor-pointer transition flex items-center gap-1 shrink-0" title="Purge all temporary scratch logs & files to free space">
+                  <span>🧹</span> <span>Prune</span>
+                </button>
+              </div>
+              <div class="relative">
+                <input type="text" id="sidecar-search-input" oninput="handleWarRoomFilesSearch(this.value)" placeholder="Search files (e.g. .pdf, .csv, report)..." class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-[11px] font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500" />
+                <span class="absolute right-2 top-1.5 text-[10px] text-slate-500 font-mono pointer-events-none">🔍</span>
+              </div>
+            </div>
+
+            <!-- Real-time File List Container -->
+            <div id="warroom-files-list" class="flex-1 overflow-y-auto p-2 space-y-1.5 custom-scrollbar font-mono text-xs select-text">
+              <div class="text-slate-500 text-[11px] text-center py-6">Loading sandbox files...</div>
+            </div>
+
+            <!-- Sidecar Footer: Quick Stats & Open Sandbox Modal -->
+            <div class="px-3 py-1.5 bg-[#0d1117] border-t border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-400 shrink-0">
+              <span id="sidecar-footer-summary">0 files</span>
+              <button type="button" onclick="openWarRoomSandboxModal()" class="text-sky-400 hover:underline cursor-pointer">Manage Quota ↗</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Operator @user Mention Non-blocking Toast (Replaces giant modal cover) -->
+        <div id="warroom-user-alert-banner" class="hidden py-1 px-2.5 mb-1 rounded-lg bg-emerald-950/90 border border-emerald-500/80 text-emerald-200 text-xs font-mono flex items-center justify-between shrink-0 shadow-md">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="text-xs">🔔</span>
+            <strong id="warroom-user-alert-title" class="text-emerald-300 font-bold text-[11px] truncate">@Agent mentioned @user and is awaiting your input</strong>
+          </div>
+          <button onclick="dismissWarRoomUserAlert()" class="px-2 py-0.5 rounded bg-emerald-800 hover:bg-emerald-700 text-emerald-100 text-[10px] font-bold border border-emerald-600 cursor-pointer shrink-0 ml-2">Focus Input</button>
+        </div>
+
+        <!-- BL-WAR-19 & BL-WAR-18: Scheduled Reminders & Active Async Background Tasks Ribbon -->
+        <div id="warroom-reminders-tray" class="hidden py-1 px-2 mb-1.5 rounded-lg bg-slate-900/95 border border-indigo-500/50 text-xs font-mono shrink-0 shadow-md overflow-hidden">
+          <div id="warroom-reminders-chips" class="flex flex-col gap-1 w-full min-w-0">
+            <!-- Dynamically populated by renderWarRoomRemindersTray() -->
+          </div>
+        </div>
+
+        <!-- BL-WAR-15: Sticky Operator Inquiries Floating Tray & Quick-Decision Matrix -->
+        <div id="warroom-inquiries-deck" class="hidden mb-1.5 rounded-xl bg-slate-900/95 border border-amber-500/60 shadow-xl overflow-hidden shrink-0 transition-all font-mono">
+          <div class="py-1 px-3 bg-amber-950/70 border-b border-amber-500/40 flex items-center justify-between">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+              <span id="warroom-inquiries-header" class="text-amber-200 font-bold text-[11px] truncate">🔔 0 Decisions Pending from Agents</span>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button type="button" onclick="toggleInquiriesTray()" id="btn-toggle-inquiries" class="text-[10px] text-amber-300 hover:text-white underline cursor-pointer">Collapse</button>
+              <button type="button" onclick="resolveAllInquiries(event)" class="text-[10px] text-slate-400 hover:text-slate-200 cursor-pointer px-1.5 py-0.2 rounded bg-slate-800 border border-slate-700">Dismiss All</button>
+            </div>
+          </div>
+          <div id="warroom-inquiries-body" class="p-2 space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
+            <!-- Dynamically populated by renderInquiriesDeck() -->
+          </div>
+        </div>
+
+        <!-- Active Speaker / Thinking Status Banner (BL-CHAT-33 + Parallel Swarm Multi-Speaker Chips) -->
+        <div id="warroom-status-banner" class="hidden relative py-1.5 px-3 mb-2 rounded-lg bg-cyan-950/70 border border-cyan-700/80 text-cyan-300 text-[11px] font-mono flex flex-col gap-1 shrink-0 shadow-sm overflow-hidden">
+          <div class="flex items-center justify-between gap-2 z-10 min-w-0">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
+              <span id="warroom-status-text" class="truncate font-semibold text-cyan-200">Agent analyzing...</span>
+              <span id="warroom-status-timer" class="text-[10px] text-cyan-400/80 font-mono bg-cyan-900/60 px-1.5 py-0.2 rounded border border-cyan-600/50 shrink-0" title="Time remaining before timeout">720s left</span>
+            </div>
+            <span id="warroom-status-mode-label" class="text-[9px] uppercase tracking-wider text-cyan-400 font-bold font-mono shrink-0">ACTIVE REASONING</span>
+          </div>
+          <div id="warroom-status-speakers" class="hidden flex flex-wrap items-center gap-1.5 z-10"></div>
+          <!-- Infinite Shimmer Wave -->
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/15 to-transparent animate-shimmer pointer-events-none"></div>
+        </div>
+
+        <!-- BL-EVO-11: Persistent Queued Directives Banner (Editable Inline + Per-Item Cancel) -->
+        <div id="warroom-queue-banner" class="hidden mb-1.5 rounded-lg bg-emerald-950/75 border border-emerald-600/70 text-emerald-200 text-[11px] font-mono px-2.5 py-1.5 shrink-0 shadow-sm space-y-1.5">
+          <!-- Dynamically populated by renderWarRoomQueueBanner() -->
+        </div>
+
+        <!-- Bottom Input & Controls Bar (with floating @ autocomplete popover) -->
+        <div class="pt-2 border-t border-slate-800 flex flex-col gap-1.5 shrink-0 bg-[#161b22] relative" ondragover="handleChatDragOver(event, 'warroom')" ondragleave="handleChatDragLeave(event, 'warroom')" ondrop="handleChatFileDrop(event, 'warroom')" id="warroom-drop-zone">
+          <!-- Floating @Mention Auto-Complete Popover (BL-CHAT-24) -->
+          <div id="warroom-mention-popover" class="hidden absolute bottom-full left-12 mb-2 w-72 max-h-60 overflow-y-auto rounded-xl bg-slate-900/95 border border-cyan-700/80 shadow-2xl z-50 p-1.5 font-mono text-xs backdrop-blur-md">
+            <!-- Dynamically populated by handleWarRoomInputKey -->
+          </div>
+
+          <!-- File Attachment Preview Pill Ribbon (BL-WAR-10: Multi-File Batch Support up to 5 files) -->
+          <div id="warroom-attachment-ribbon" class="hidden flex flex-wrap items-center gap-1.5 px-1 py-0.5 text-xs">
+            <!-- Populated dynamically by renderChatAttachmentRibbon('warroom') -->
+          </div>
+
+          <!-- Pinned Bottom 2-Row Unified War Room Composer Card -->
+          <div class="rounded-xl bg-[#0d1117] border border-slate-800 focus-within:border-cyan-500/80 shadow-inner transition-colors flex flex-col overflow-hidden">
+            <!-- Row 1: 100% Full-Width Spacious Textarea -->
+            <textarea id="warroom-text-input" rows="1"
+                   placeholder="Type @Agent, @user (Ctrl+Enter to Send / Queue, Shift+Enter to Interrupt)..." 
+                   oninput="handleWarRoomInputChange(event); autoResizeTextarea(this, event);"
+                   onkeydown="handleWarRoomInputKeydown(event)"
+                   class="w-full min-h-[42px] max-h-[140px] resize-none bg-transparent px-3.5 pt-2.5 pb-2 text-xs text-white placeholder-slate-500 focus:outline-none font-mono leading-relaxed custom-scrollbar"></textarea>
+
+            <!-- Row 2: Compact Action Toolbar (Attach, Mic, Mode Pill, Review Gate, Depth, Interrupt, Send) -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 px-2.5 py-1.5 border-t border-slate-800/70 bg-slate-950/40">
+              <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
+                <input type="file" id="warroom-file-input" class="hidden" multiple onchange="handleChatFileUpload(event, 'warroom')" />
+                <button type="button" onclick="document.getElementById('warroom-file-input').click()" class="p-1.5 h-[30px] w-[30px] rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition cursor-pointer shrink-0 flex items-center justify-center" title="Attach up to 5 files / any format (max 100MB each, 250MB total) or drag & drop">
+                  <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                </button>
+                <button id="btn-warroom-mic" onclick="toggleWarRoomVoiceDictate()" class="p-1.5 h-[30px] w-[30px] rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition shrink-0 flex items-center justify-center cursor-pointer" title="Voice Dictation">
+                  <svg id="warroom-mic-icon" class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 02-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                </button>
+
+                <!-- Execution Mode Segmented Pill: Turns (Default) | Swarm | Plan->Swarm -->
+                <div id="warroom-exec-mode-bar" class="shrink-0 flex items-center h-[30px] bg-slate-950 border border-slate-700/90 rounded-lg p-0.5 gap-0.5 font-mono text-[10px]" title="Execution Mode: Turns (Sequential), Swarm (Parallel), or Plan->Swarm (Lead plans first, then parallel workers)">
+                  <button type="button" data-exec-mode="sequential" onclick="setWarRoomExecMode('sequential')" class="h-full px-1.5 sm:px-2 rounded-md bg-cyan-950 text-cyan-200 border border-cyan-500/60 font-bold transition cursor-pointer flex items-center gap-1 whitespace-nowrap" title="Turns (Default): Mentioned agents run sequentially in order">
+                    <span>⟳</span><span>Turns</span>
+                  </button>
+                  <button type="button" data-exec-mode="parallel" onclick="setWarRoomExecMode('parallel')" class="h-full px-1.5 sm:px-2 rounded-md text-slate-400 hover:text-slate-200 border border-transparent transition cursor-pointer flex items-center gap-1 whitespace-nowrap" title="Swarm: Mentioned agents (or room panelists) run simultaneously in parallel">
+                    <span>⚡</span><span>Swarm</span>
+                  </button>
+                  <button type="button" data-exec-mode="orchestrate_parallel" onclick="setWarRoomExecMode('orchestrate_parallel')" class="h-full px-1.5 sm:px-2 rounded-md text-slate-400 hover:text-slate-200 border border-transparent transition cursor-pointer flex items-center gap-1 whitespace-nowrap" title="Plan -> Swarm: First mentioned agent (or Orchestrator) plans first, then assigns other agents in parallel">
+                    <span>👑</span><span>Plan⚡</span>
+                  </button>
+                </div>
+
+                <!-- Optional Plan Approval Gate Toggle (Available in all modes; default OFF uses 10s auto-proceed timer) -->
+                <button type="button" id="btn-warroom-review-plan" onclick="toggleWarRoomReviewPlan()" class="flex h-[30px] px-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-400 text-[10px] font-mono transition cursor-pointer items-center gap-1 whitespace-nowrap shrink-0" title="Hold Pre-Flight Plan until manual approval (when OFF, agent shows Understanding &amp; Action Plan for 10s then auto-proceeds)">
+                  <span>⏸️</span><span>Review Plan</span>
+                </button>
+              </div>
+
+              <!-- Balanced Right/Bottom Cluster: Depth + Interrupt + Send -->
+              <div class="flex items-center justify-between sm:justify-end gap-1.5 shrink-0 w-full sm:w-auto">
+                <!-- Human-Readable Discussion Turns / Waves Depth Selector (BL-WAR-30) -->
+                <div class="relative shrink-0 flex items-center h-[30px]">
+                  <select id="warroom-turns-depth-select" class="h-[30px] bg-slate-900 hover:bg-slate-800 border border-slate-700/90 hover:border-cyan-600 rounded-lg px-2.5 text-[10.5px] text-cyan-300 font-mono font-semibold focus:outline-none cursor-pointer transition" title="Autonomous Discussion Depth (Max Sequential Turns per prompt)">
+                    <option value="1" selected>1 Turn</option>
+                    <option value="2">2 Turns</option>
+                    <option value="4">4 Turns</option>
+                    <option value="8">8 Turns</option>
+                    <option value="12">12 Turns</option>
+                    <option value="16">16 Turns</option>
+                    <option value="20">20 Turns</option>
+                  </select>
+                </div>
+
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button onclick="handleWarRoomInterruptClick()" id="btn-interrupt-warroom" class="hidden px-2.5 h-[30px] bg-rose-700 hover:bg-rose-600 text-white rounded-lg text-[11px] font-semibold items-center gap-1 transition shrink-0 cursor-pointer shadow-sm animate-pulse" title="Interrupt currently speaking agent(s) immediately (Shift+Enter)">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <span>Interrupt</span>
+                  </button>
+                  <button onclick="sendWarRoomChat()" id="btn-send-warroom" class="px-3 h-[30px] bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg flex items-center justify-center gap-1.5 transition shrink-0 cursor-pointer shadow-md group text-[11px] font-semibold whitespace-nowrap" title="Send (Ctrl+Enter)">
+                    <span id="btn-send-warroom-label" class="hidden sm:inline">Send</span>
+                    <svg id="btn-send-warroom-icon" class="w-3.5 h-3.5 transform rotate-[-45deg] translate-x-0.5 -translate-y-0.5 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- Compact Modal: Link Chat Agent Workspace to Active War Room -->
+    <div id="modal-warroom-chat-bridge" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="w-full max-w-md bg-[#161b22] border border-slate-700 rounded-2xl shadow-2xl p-4 space-y-3 text-xs font-mono">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h3 class="text-sm font-bold text-emerald-300">🔗 Link Chat Agent Workspace</h3>
+          <button type="button" onclick="closeWarRoomChatBridgeModal()" class="text-slate-400 hover:text-white text-base cursor-pointer">✕</button>
+        </div>
+        <p class="text-[11px] text-slate-400">Allows this War Room &amp; its scheduler to read the active ledger mirror, update extractor/pruning rules, publish finished deliverables, and optionally let the Chat Agent post updates to its bound WhatsApp group.</p>
+        <div class="space-y-2.5">
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Chat Agent</label>
+            <select id="wr-bridge-agent-select" onchange="onWarRoomBridgeAgentChange()" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200"></select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Sub-Data Workspace</label>
+            <select id="wr-bridge-scope-select" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200"></select>
+          </div>
+          <label class="flex items-center gap-2 text-[11px] text-amber-200 bg-amber-950/20 border border-amber-800/40 rounded-lg p-2 cursor-pointer">
+            <input type="checkbox" id="wr-bridge-allow-broadcast" class="accent-emerald-500" />
+            <span>Allow War Room &amp; Scheduler to trigger Chat Agent WhatsApp group broadcast</span>
+          </label>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+          <button type="button" onclick="clearWarRoomChatBridge()" class="px-3 py-1.5 rounded bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-800 cursor-pointer">Unlink</button>
+          <button type="button" onclick="saveWarRoomChatBridge()" class="px-4 py-1.5 rounded bg-emerald-700 hover:bg-emerald-600 text-white font-bold cursor-pointer">Save Link</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB: 🤖 AGENT ROSTER (FLEET WORKSTATIONS & ASSIGNMENTS) -->
+    <!-- ============================================================== -->

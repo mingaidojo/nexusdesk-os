@@ -1,0 +1,73 @@
+<div id="tab-models-failover" class="hidden flex flex-col gap-5">
+      <!-- Clean Top Sub-Nav (Dedicated View Switcher) -->
+      <div class="bg-[#161b22]/95 border border-slate-800/90 p-2.5 rounded-xl flex flex-wrap items-center gap-2 shadow-lg">
+        <button type="button" onclick="switchMainTab('models-agents')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-cyan-300 transition flex items-center gap-1.5">
+          <span>🤖</span> <span>Agent Roles</span>
+        </button>
+        <button type="button" onclick="switchMainTab('models-failover')" class="px-3 py-1.5 rounded-lg bg-emerald-900/60 border border-emerald-500/80 text-xs font-mono text-emerald-200 font-bold transition flex items-center gap-1.5 shadow-sm">
+          <span>🌐</span> <span>Global Failover</span>
+        </button>
+        <button type="button" onclick="switchMainTab('models-reasoning')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-amber-300 transition flex items-center gap-1.5">
+          <span>⚡</span> <span>Reasoning Budgets</span>
+        </button>
+        <button type="button" onclick="switchMainTab('models-memory')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-purple-300 transition flex items-center gap-1.5">
+          <span>🧠</span> <span>Context Meters</span>
+        </button>
+        <button type="button" onclick="switchMainTab('models-library')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-blue-300 transition flex items-center gap-1.5">
+          <span>📚</span> <span>Model Library</span>
+        </button>
+      </div>
+
+      <div id="models-section-failover" class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+              <span>🌐</span> <span>DEFAULT GLOBAL & FAIL BACK MODEL</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Global baseline model and multi-tier cascading failover sequence across all agents.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btn-add-fallback-step" onclick="openAddFallbackModal()" class="px-3 py-1.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+              <span>+ Add Fallback Tier</span>
+            </button>
+            <button onclick="saveFallbackChain()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+              <span>💾 Save Chain to config.yaml</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Top Card: Default Global Model Banner -->
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/90 mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-inner">
+          <div class="flex items-start md:items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-cyan-950/80 border border-cyan-800/80 flex items-center justify-center text-cyan-400 text-base font-bold shrink-0">🌐</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-400 font-mono">System-Wide Default Global Model:</span>
+                <span id="global-model-provider-badge" class="text-[9px] px-1.5 py-0.2 rounded bg-slate-900 border border-slate-800 text-emerald-400 font-mono font-semibold uppercase">ABACUS</span>
+              </div>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span id="global-model-name-display" class="text-cyan-300 font-mono font-bold text-sm tracking-wide">--</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-mono mt-0.5">Used across unassigned agents, background tasks, and when agent fallbacks exhaust.</p>
+            </div>
+          </div>
+          <button onclick="openEditGlobalModelModal()" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-200 hover:text-white flex items-center gap-1.5 transition self-start md:self-center shrink-0">
+            <span>✏️</span> <span>Edit Global Default</span>
+          </button>
+        </div>
+
+        <div class="mb-2.5 flex items-center justify-between">
+          <h3 class="text-xs font-bold text-slate-300 font-mono flex items-center gap-1.5">
+            <span>🪜</span> <span>Cascading Global Failover Tiers:</span>
+          </h3>
+          <span class="text-[10px] text-slate-500 font-mono">Tiers activate sequentially upon upstream errors</span>
+        </div>
+
+        <div id="fallback-chain-list" class="flex flex-col gap-2.5">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- DEDICATED PAGE 6: ⚡ INTELLIGENCE & MODELS: REASONING BUDGETS -->
+    <!-- ============================================================== -->

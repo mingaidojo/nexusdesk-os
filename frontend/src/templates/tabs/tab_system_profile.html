@@ -1,0 +1,92 @@
+<div id="tab-system-profile" class="hidden flex flex-col gap-6">
+  <!-- Top Overview Header -->
+  <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="w-10 h-10 rounded-xl bg-cyan-950/80 border border-cyan-800/80 flex items-center justify-center text-lg text-cyan-400 font-pixel">👤</span>
+        <div>
+          <h2 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+            <span>USER PROFILE &amp; ADDRESSING</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5 font-mono">Configure how NexusDesk OS and AI agents address you in War Rooms and Direct Chat.</p>
+        </div>
+      </div>
+      <span class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[10px] text-cyan-400 font-mono font-semibold uppercase">
+        LOCAL PROFILE
+      </span>
+    </div>
+  </div>
+
+  <!-- Profile Settings Card -->
+  <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl max-w-2xl space-y-4">
+    <div>
+      <label for="sys-profile-display-name" class="block text-xs font-bold text-slate-200 font-pixel mb-1.5">
+        Display Name
+      </label>
+      <p class="text-[11px] text-slate-400 font-mono mb-3">
+        Stored locally in <code class="text-cyan-300">backend/data/user_profile.json</code> (gitignored). Defaults to <code class="text-slate-300">User</code> on fresh GitHub clones.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-2.5">
+        <input id="sys-profile-display-name" type="text" maxlength="40" placeholder="e.g. Min or User"
+               oninput="updateUserProfilePreview()"
+               class="flex-1 bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none" />
+      </div>
+    </div>
+
+    <div>
+      <label for="sys-profile-timezone" class="block text-xs font-bold text-slate-200 font-pixel mb-1.5">
+        Default Timezone
+      </label>
+      <p class="text-[11px] text-slate-400 font-mono mb-3">
+        Global timezone used across NexusDesk OS (Header Clock, Chat Date &amp; Time, Crons, Reminders, and Archive Exports).
+      </p>
+      <div class="flex flex-col sm:flex-row gap-2.5">
+        <select id="sys-profile-timezone" onchange="updateUserProfilePreview()"
+                class="flex-1 bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none cursor-pointer">
+          <option value="-12|GMT-12">UTC-12:00 (GMT-12)</option>
+          <option value="-11|GMT-11">UTC-11:00 (GMT-11)</option>
+          <option value="-10|GMT-10">UTC-10:00 (GMT-10 · Hawaii)</option>
+          <option value="-9|GMT-9">UTC-09:00 (GMT-9 · Alaska)</option>
+          <option value="-8|GMT-8">UTC-08:00 (GMT-8 · US Pacific)</option>
+          <option value="-7|GMT-7">UTC-07:00 (GMT-7 · US Mountain)</option>
+          <option value="-6|GMT-6">UTC-06:00 (GMT-6 · US Central)</option>
+          <option value="-5|GMT-5">UTC-05:00 (GMT-5 · US Eastern)</option>
+          <option value="-4|GMT-4">UTC-04:00 (GMT-4 · Atlantic)</option>
+          <option value="-3|GMT-3">UTC-03:00 (GMT-3 · Sao Paulo)</option>
+          <option value="0|UTC">UTC+00:00 (UTC · London)</option>
+          <option value="1|GMT+1">UTC+01:00 (GMT+1 · Berlin/Paris)</option>
+          <option value="2|GMT+2">UTC+02:00 (GMT+2 · Cairo/Athens)</option>
+          <option value="3|GMT+3">UTC+03:00 (GMT+3 · Riyadh/Moscow)</option>
+          <option value="4|GMT+4">UTC+04:00 (GMT+4 · Dubai)</option>
+          <option value="5|GMT+5">UTC+05:00 (GMT+5 · Karachi)</option>
+          <option value="5.5|GMT+5:30">UTC+05:30 (GMT+5:30 · India)</option>
+          <option value="6|GMT+6">UTC+06:00 (GMT+6 · Dhaka)</option>
+          <option value="7|GMT+7" selected>UTC+07:00 (GMT+7 · Jakarta / Bangkok)</option>
+          <option value="8|GMT+8">UTC+08:00 (GMT+8 · Singapore / Bali / Hong Kong)</option>
+          <option value="9|GMT+9">UTC+09:00 (GMT+9 · Tokyo / Seoul)</option>
+          <option value="10|GMT+10">UTC+10:00 (GMT+10 · Sydney)</option>
+          <option value="11|GMT+11">UTC+11:00 (GMT+11)</option>
+          <option value="12|GMT+12">UTC+12:00 (GMT+12 · Auckland)</option>
+          <option value="13|GMT+13">UTC+13:00 (GMT+13)</option>
+          <option value="14|GMT+14">UTC+14:00 (GMT+14)</option>
+        </select>
+        <button type="button" onclick="saveUserProfileSettings()" id="btn-save-user-profile"
+                class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-mono font-bold transition shadow-md cursor-pointer shrink-0">
+          💾 Save Profile
+        </button>
+      </div>
+    </div>
+
+    <div class="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2 text-xs font-mono">
+      <div class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Live Addressing &amp; Time Preview</div>
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-slate-400">Chat Bubble:</span>
+        <span id="sys-profile-preview-bubble" class="px-2 py-0.5 rounded bg-emerald-950/90 border border-emerald-700 text-emerald-300 font-bold">👤 Min</span>
+        <span class="text-slate-400">Mention Handle:</span>
+        <span id="sys-profile-preview-mention" class="px-2 py-0.5 rounded bg-emerald-950/90 border border-emerald-500/80 text-emerald-200 font-bold">👤 @Min</span>
+        <span class="text-slate-400">Sample Timestamp:</span>
+        <span id="sys-profile-preview-time" class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-cyan-300 font-bold">—</span>
+      </div>
+    </div>
+  </div>
+</div>

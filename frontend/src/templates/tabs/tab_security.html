@@ -1,0 +1,125 @@
+<div id="tab-security" class="hidden flex flex-col gap-6">
+      
+      <!-- Top Overview Header -->
+      <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-emerald-950/80 border border-emerald-800/80 flex items-center justify-center text-lg text-emerald-400 font-pixel">🛡️</span>
+            <div>
+              <h2 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+                <span>SYSTEM SECURITY & ACCESS CONTROLS</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5 font-mono">Frictionless Development Mode vs Production Master Token authentication.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="tab-sec-status-pill" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[10px] text-slate-400 font-mono font-semibold uppercase">
+              STATUS: INACTIVE (DEV MODE)
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Security Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Card 1: Auth Mode Toggle & Architecture -->
+        <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+                <span>🔐</span> <span>AUTHENTICATION MODE</span>
+              </h3>
+              <span class="text-[10px] text-cyan-400 font-mono">1-CLICK TOGGLE</span>
+            </div>
+
+            <!-- Current State Banner -->
+            <div id="tab-sec-banner" class="p-3.5 rounded-xl border flex items-center justify-between bg-slate-900/60 border-slate-800 mb-4">
+              <div>
+                <div class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold font-mono">Current Policy</div>
+                <div id="tab-sec-state-text" class="text-xs font-bold text-slate-300 font-mono mt-0.5">🔓 Inactive (Development Mode)</div>
+              </div>
+              <button id="tab-sec-toggle-btn" onclick="toggleSecurityAuthMode()" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm cursor-pointer font-mono">
+                <span>Enable Auth</span>
+              </button>
+            </div>
+
+            <div class="space-y-2.5 text-xs font-mono text-slate-400 leading-relaxed mb-4">
+              <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80">
+                <span class="text-emerald-400 font-semibold block mb-1">🛠️ Frictionless Development Mode (Default)</span>
+                No secret keys required. Ideal for local coding, testing new MCP tools, and rapid UI development without credential prompts.
+              </div>
+              <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80">
+                <span class="text-cyan-400 font-semibold block mb-1">🔒 Master Key Production Mode</span>
+                Enforces Bearer token verification across all REST APIs and WebSocket handshakes. Automatically locks the UI until authenticated.
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-500 font-mono border-t border-slate-800/80 pt-3">
+            Policy updates take effect immediately on the running daemon without restart.
+          </div>
+        </div>
+
+        <!-- Card 2: Secret Key & Fast Unlock Link -->
+        <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+                <span>🔑</span> <span>MASTER CREDENTIALS</span>
+              </h3>
+              <button onclick="regenerateSecretKey()" class="text-[11px] text-rose-400 hover:text-rose-300 underline font-mono cursor-pointer">
+                Regenerate Key
+              </button>
+            </div>
+
+            <!-- Secret Key Box -->
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2 mb-4 font-mono">
+              <div class="flex justify-between items-center">
+                <label class="text-slate-300 font-semibold text-xs flex items-center gap-1.5">
+                  <span>🔑</span> <span>NexusDesk Master Secret Key</span>
+                </label>
+                <span class="text-[10px] text-slate-500">Stored in ~/.nexusdesk/nexusdesk_secret.key</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <input id="tab-sec-key-input" type="password" readonly class="w-full bg-slate-900 border border-slate-800 rounded p-2 text-cyan-300 font-mono text-xs focus:outline-none" />
+                <button onclick="toggleTabSecKeyVisibility()" id="tab-sec-toggle-vis" class="px-2.5 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs cursor-pointer font-mono" title="Show/Hide">👁️</button>
+                <button onclick="copyTabSecurityKey()" class="px-3 py-2 rounded bg-cyan-700 hover:bg-cyan-600 text-white text-xs font-semibold cursor-pointer font-mono">Copy</button>
+              </div>
+            </div>
+
+            <!-- 1-Click Fast Unlock URL -->
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2 mb-4 font-mono">
+              <div class="flex justify-between items-center">
+                <label class="text-slate-300 font-semibold text-xs flex items-center gap-1.5">
+                  <span>🌐</span> <span>1-Click Fast Unlock URL</span>
+                </label>
+                <button onclick="copyTabSecurityUnlockUrl()" class="text-[10px] text-cyan-400 hover:text-cyan-300 underline font-mono cursor-pointer">Copy URL</button>
+              </div>
+              <input id="tab-sec-url-input" type="text" readonly class="w-full bg-slate-900 border border-slate-800 rounded p-2 text-slate-400 font-mono text-[11px] truncate focus:outline-none" />
+              <div class="text-[10px] text-slate-500">
+                Opening this link on any browser instantly authenticates and saves the token to localStorage.
+              </div>
+            </div>
+          </div>
+
+          <!-- Runtime Footprint Summary -->
+          <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs font-mono text-slate-400 space-y-1">
+            <div class="flex justify-between">
+              <span>Instance:</span>
+              <span class="text-cyan-400 font-semibold">agents_bs (BibleStoryApp)</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Daemon Status:</span>
+              <span class="text-emerald-400 font-semibold">Systemd Active (nexusdesk.service)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 12: SYSTEM DAEMON SERVICE & RESTART (BL-SYS-06)            -->
+    <!-- ============================================================== -->

@@ -1,0 +1,31 @@
+<!-- Skill Quick Drawer for Workflow Steps (BL-AUTO-35) -->
+  <div id="step-skill-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-2.5 sm:p-4 md:p-6 overflow-hidden">
+    <div class="bg-[#161b22] border border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[calc(100vh-1.5rem)] sm:max-h-[88vh] overflow-hidden">
+      <div class="flex justify-between items-center px-4 py-3 sm:px-5 border-b border-slate-800 bg-[#161b22] shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="text-amber-400 text-base">🛠️</span>
+          <div>
+            <h3 id="step-skill-modal-title" class="font-bold text-xs sm:text-sm text-slate-100 font-pixel">BOUND STEP SKILL</h3>
+            <span id="step-skill-modal-subtitle" class="text-[9px] sm:text-[10px] text-slate-400 font-mono">Dynamic SKILL.md bound to workflow execution</span>
+          </div>
+        </div>
+        <button onclick="closeStepSkillModal()" class="text-slate-400 hover:text-white text-lg leading-none p-1 cursor-pointer">&times;</button>
+      </div>
+      <div class="p-3.5 sm:p-5 overflow-y-auto flex-1 custom-scrollbar space-y-3">
+        <div class="flex items-center justify-between text-xs font-mono text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+          <span id="step-skill-path" class="truncate font-bold text-cyan-300"></span>
+          <span id="step-skill-badge" class="px-2 py-0.5 rounded text-[10px] font-bold"></span>
+        </div>
+        <div class="relative">
+          <pre id="step-skill-content" class="w-full bg-slate-950/90 border border-slate-800/80 rounded-xl p-3 text-slate-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap overflow-x-auto max-h-[50vh] custom-scrollbar"></pre>
+        </div>
+      </div>
+      <div class="px-4 py-2.5 sm:px-5 sm:py-3 border-t border-slate-800 bg-[#161b22] flex justify-between items-center shrink-0">
+        <span class="text-[10px] text-slate-500 font-mono">Auto-evolved via Telegram • Live disk read</span>
+        <div class="flex gap-2">
+          <button onclick="openSkillInVault()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-mono transition cursor-pointer">Open in Memory Vault</button>
+          <button onclick="closeStepSkillModal()" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition cursor-pointer">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>

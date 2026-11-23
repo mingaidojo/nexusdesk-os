@@ -1,0 +1,30 @@
+<!-- Modal: New Room / Tab Picker (BL-UI-31) -->
+  <div id="modal-new-room-picker" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 overflow-hidden" onclick="if(event.target===this) closeNewRoomModal()">
+    <div class="bg-[#161b22] border border-slate-700 rounded-2xl w-full max-w-sm shadow-2xl p-4 flex flex-col gap-3 font-mono">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div class="text-xs font-bold text-slate-100 flex items-center gap-1.5">
+          <span class="text-emerald-400 font-bold text-sm">+</span>
+          <span>OPEN NEW ROOM TAB</span>
+        </div>
+        <button type="button" onclick="closeNewRoomModal()" class="text-slate-400 hover:text-white px-1.5 py-0.5 rounded text-xs">✕</button>
+      </div>
+
+      <div class="space-y-2 pt-1">
+        <button onclick="createNewDirectChatTabPrompt()" class="w-full text-left p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-emerald-500/80 transition flex items-center gap-3 cursor-pointer group">
+          <span class="text-2xl p-2 rounded-lg bg-emerald-950/60 border border-emerald-800 text-emerald-400 group-hover:scale-105 transition">💬</span>
+          <div>
+            <div class="font-bold text-xs text-slate-100 group-hover:text-emerald-300 transition">1-on-1 Agent Chat</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Dedicated private session with a specific agent</div>
+          </div>
+        </button>
+
+        <button onclick="createNewWarRoomTabPrompt()" class="w-full text-left p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/80 transition flex items-center gap-3 cursor-pointer group">
+          <span class="text-2xl p-2 rounded-lg bg-cyan-950/60 border border-cyan-800 text-cyan-400 group-hover:scale-105 transition">👥</span>
+          <div>
+            <div class="font-bold text-xs text-slate-100 group-hover:text-cyan-300 transition">New War Room Tab</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Collaborative roundtable debate bus across agents</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,85 @@
+<!-- MCP Server Configuration Modal -->
+  <div id="mcp-config-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-2.5 sm:p-4 md:p-6 overflow-hidden">
+    <div class="bg-[#161b22] border border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[calc(100vh-1.5rem)] sm:max-h-[88vh] overflow-hidden">
+      <!-- Modal Header (Pinned) -->
+      <div class="flex justify-between items-center px-4 py-3 sm:px-5 border-b border-slate-800 bg-[#161b22] shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-cyan-950 border border-cyan-800 flex items-center justify-center text-xs text-cyan-400 font-pixel">🔌</span>
+          <div>
+            <h3 id="modal-mcp-title" class="font-bold text-xs sm:text-sm text-slate-100 font-pixel">CONFIGURE MCP SERVER</h3>
+            <span class="text-[9px] sm:text-[10px] text-cyan-400 font-mono">MODEL CONTEXT PROTOCOL DAEMON</span>
+          </div>
+        </div>
+        <button onclick="closeMcpConfigModal()" class="text-slate-400 hover:text-white text-lg leading-none p-1 cursor-pointer">&times;</button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="space-y-3.5 text-xs font-mono p-3.5 sm:p-5 overflow-y-auto flex-1 custom-scrollbar">
+        <!-- Quick Preset Templates -->
+        <div class="bg-slate-950/60 p-2.5 sm:p-3 rounded-xl border border-slate-800/80">
+          <label class="text-slate-400 text-[10px] uppercase font-semibold block mb-1.5">Quick Presets:</label>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="applyMcpTemplate('filesystem')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-emerald-400 text-[10.5px] transition">Filesystem</button>
+            <button type="button" onclick="applyMcpTemplate('postgres')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-emerald-400 text-[10.5px] transition">PostgreSQL</button>
+            <button type="button" onclick="applyMcpTemplate('sqlite')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-emerald-400 text-[10.5px] transition">SQLite</button>
+            <button type="button" onclick="applyMcpTemplate('brave-search')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-emerald-400 text-[10.5px] transition">Brave Search</button>
+            <button type="button" onclick="applyMcpTemplate('git')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-emerald-400 text-[10.5px] transition">Git</button>
+            <button type="button" onclick="applyMcpTemplate('puppeteer')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-emerald-400 text-[10.5px] transition">Puppeteer</button>
+            <button type="button" onclick="applyMcpTemplate('fetch')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-emerald-400 text-[10.5px] transition">Fetch</button>
+            <button type="button" onclick="applyMcpTemplate('memory')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-emerald-400 text-[10.5px] transition">Memory</button>
+            <button type="button" onclick="applyMcpTemplate('linear')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-400 text-[10.5px] transition">Linear (SSE)</button>
+            <button type="button" onclick="applyMcpTemplate('supabase')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-400 text-[10.5px] transition">Supabase</button>
+            <button type="button" onclick="applyMcpTemplate('cloudflare')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-400 text-[10.5px] transition">Cloudflare</button>
+            <button type="button" onclick="applyMcpTemplate('sentry')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-400 text-[10.5px] transition">Sentry</button>
+            <button type="button" onclick="applyMcpTemplate('github')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-400 text-[10.5px] transition">GitHub</button>
+            <button type="button" onclick="applyMcpTemplate('stripe')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-400 text-[10.5px] transition">Stripe</button>
+            <button type="button" onclick="applyMcpTemplate('notion')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-400 text-[10.5px] transition">Notion</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-slate-400 block mb-1">Server Name <span class="text-rose-400">*</span></label>
+          <input id="modal-mcp-name" type="text" placeholder="e.g. github" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 font-mono text-xs focus:outline-none focus:border-cyan-500" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div>
+            <label class="text-slate-400 block mb-1">Command (stdio transport)</label>
+            <input id="modal-mcp-command" type="text" placeholder="e.g. npx -y @modelcontextprotocol/server-github" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-500" />
+          </div>
+          <div>
+            <label class="text-slate-400 block mb-1">URL (SSE / HTTP transport)</label>
+            <input id="modal-mcp-url" type="text" placeholder="e.g. https://mcp.linear.app/sse" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="text-slate-400 block mb-1">Command Arguments (optional, comma-separated)</label>
+          <input id="modal-mcp-args" type="text" placeholder="e.g. --host, localhost" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-300 font-mono text-xs focus:outline-none focus:border-cyan-500" />
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-slate-400">Environment Variables (JSON object)</label>
+            <span class="text-[10px] text-slate-500">e.g. {"GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_..."}</span>
+          </div>
+          <textarea id="modal-mcp-env" rows="2" placeholder='{"API_KEY": "..."}' class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-emerald-300 font-mono text-xs focus:outline-none focus:border-cyan-500 resize-y"></textarea>
+        </div>
+
+        <div id="modal-mcp-test-status" class="hidden text-xs font-mono px-3 py-2 rounded-lg bg-slate-950 border border-slate-800"></div>
+      </div>
+
+      <!-- Pinned Footer -->
+      <div class="px-4 py-2.5 sm:px-5 sm:py-3 border-t border-slate-800 bg-[#161b22] flex items-center justify-between gap-2 shrink-0 z-10">
+        <button type="button" onclick="testMcpConnection()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-cyan-300 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer" title="Probe stdio binary or ping SSE/HTTP URL">
+          <span>📡</span> <span>Test Connection</span>
+        </button>
+        <div class="flex gap-2">
+          <button type="button" onclick="closeMcpConfigModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition cursor-pointer">Cancel</button>
+          <button type="button" onclick="submitSaveMcpServer()" id="modal-mcp-submit-btn" class="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-md cursor-pointer">
+            <span>💾</span> <span>Save to config.yaml</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

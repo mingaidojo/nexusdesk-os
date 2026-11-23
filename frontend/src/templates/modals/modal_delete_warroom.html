@@ -1,0 +1,70 @@
+<!-- Archive & Delete War Room Confirmation Modal -->
+<div id="modal-delete-warroom" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-3 overflow-hidden">
+  <div class="bg-[#0d1117] border border-rose-800/70 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-rose-950/20 shrink-0">
+      <div class="flex items-center gap-2.5">
+        <span class="text-lg">🗄️</span>
+        <div>
+          <h3 class="font-bold text-white text-sm font-pixel">ARCHIVE &amp; DELETE WAR ROOM</h3>
+          <p class="text-[10px] text-rose-300/80 font-mono">Safe 4-step teardown with verified ZIP backup</p>
+        </div>
+      </div>
+      <button type="button" onclick="closeDeleteWarRoomModal()" class="text-slate-400 hover:text-white text-lg px-2 cursor-pointer" title="Close">✕</button>
+    </div>
+
+    <div class="p-5 space-y-4 overflow-y-auto custom-scrollbar text-xs font-mono">
+      <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400">Target Room:</span>
+          <span id="del-wr-room-name" class="font-bold text-white truncate max-w-[220px]">—</span>
+        </div>
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="text-slate-400">Room ID:</span>
+          <span id="del-wr-room-id" class="text-cyan-400">—</span>
+        </div>
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="text-slate-400">Messages / Sandbox:</span>
+          <span id="del-wr-stats" class="text-amber-300">Loading preview…</span>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800/80 space-y-2 text-[11px]">
+        <div class="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Automated Pipeline</div>
+        <div class="flex items-center gap-2 text-slate-300"><span class="text-emerald-400">1.</span> Summarize conversation &amp; deliverables → <code class="text-cyan-300">warroom-readme.md</code></div>
+        <div class="flex items-center gap-2 text-slate-300"><span class="text-emerald-400">2.</span> Prune duplicates, old versions (&gt;3), &amp; scratch clutter</div>
+        <div class="flex items-center gap-2 text-slate-300"><span class="text-emerald-400">3.</span> Archive ZIP → <code class="text-amber-300">/home/nexus_shared/archives/</code></div>
+        <div class="flex items-center gap-2 text-rose-300"><span class="text-rose-400">4.</span> Delete sandbox &amp; War Room state (only after ZIP verify)</div>
+      </div>
+
+      <div class="space-y-2 pt-1">
+        <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+          <input id="del-wr-prune-scratch" type="checkbox" checked class="accent-emerald-500 rounded" />
+          <span>Prune <code class="text-amber-300">scratch/</code> before archiving</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+          <input id="del-wr-prune-dups" type="checkbox" checked class="accent-emerald-500 rounded" />
+          <span>Prune byte-identical duplicate files (SHA-256) &amp; <code class="text-slate-400">*.bak</code></span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+          <input id="del-wr-keep-3" type="checkbox" checked class="accent-emerald-500 rounded" />
+          <span>Retain only last 3 versions of each deliverable (<code class="text-cyan-300">vN</code> / <code class="text-cyan-300">rN</code>)</span>
+        </label>
+      </div>
+
+      <div id="del-wr-status-box" class="hidden p-3 rounded-xl bg-cyan-950/40 border border-cyan-800/60 text-cyan-200 text-[11px] flex items-center gap-2.5">
+        <span class="animate-spin">⏳</span>
+        <span id="del-wr-status-text">Generating warroom-readme.md, pruning &amp; archiving…</span>
+      </div>
+    </div>
+
+    <div class="px-5 py-3.5 border-t border-slate-800 bg-slate-950/60 flex items-center justify-end gap-2.5 shrink-0">
+      <button type="button" id="del-wr-cancel-btn" onclick="closeDeleteWarRoomModal()" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono transition cursor-pointer">
+        Cancel
+      </button>
+      <button type="button" id="del-wr-confirm-btn" onclick="confirmArchiveAndDeleteWarRoom()" class="px-4 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-mono font-bold transition shadow-md cursor-pointer flex items-center gap-1.5">
+        <span>🗄️</span>
+        <span>Archive &amp; Delete</span>
+      </button>
+    </div>
+  </div>
+</div>

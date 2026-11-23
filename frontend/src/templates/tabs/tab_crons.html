@@ -1,0 +1,92 @@
+<div id="tab-crons" class="hidden flex flex-col gap-4">
+      
+      <!-- Cron Pipelines Table Container -->
+      <div class="bg-[#161b22] border border-slate-800 rounded-xl p-4 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-1.5">
+                <span>⏰</span> <span>AUTONOMOUS CRON PIPELINES</span>
+              </span>
+              <span id="cron-stats-pill" class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-700/80 text-emerald-400">Loading...</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-0.5">Human readable schedules with local timezone translation, auto-failover, and direct execution.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openTimezoneModal()" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-slate-700 text-xs font-mono transition flex items-center gap-1">
+              <span>🌐</span> <span id="btn-cron-tz-label">Timezone</span>
+            </button>
+            <button onclick="openCreateCronModal()" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-sm">
+              <span>+ Create Cron</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary Strip: Total / Active / Disabled -->
+        <div class="grid grid-cols-3 gap-2 mb-3 text-xs font-mono">
+          <div class="p-2 rounded-lg bg-slate-900/70 border border-slate-800/80 flex items-center justify-between">
+            <span class="text-slate-400 text-[11px]">Total Crons</span>
+            <span id="stat-cron-total" class="text-white font-bold">0</span>
+          </div>
+          <div class="p-2 rounded-lg bg-emerald-950/40 border border-emerald-900/60 flex items-center justify-between">
+            <span class="text-emerald-400 text-[11px]">Active (Enabled)</span>
+            <span id="stat-cron-active" class="text-emerald-300 font-bold">0</span>
+          </div>
+          <div class="p-2 rounded-lg bg-slate-900/70 border border-slate-800/80 flex items-center justify-between">
+            <span class="text-slate-400 text-[11px]">Disabled / Inactive</span>
+            <span id="stat-cron-disabled" class="text-slate-400 font-bold">0</span>
+          </div>
+        </div>
+
+        <!-- Engine Filter Strip & Search Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3 p-2 rounded-lg bg-slate-950/80 border border-slate-800/90 text-xs font-mono">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider mr-1">Filter Engine:</span>
+            <button id="btn-cron-filter-all" onclick="filterCronsByEngine('all')" class="px-2.5 py-1 rounded text-[11px] font-semibold transition bg-cyan-950 text-cyan-300 border border-cyan-800 shadow-sm cursor-pointer">
+              <span>All Engines</span> (<span id="count-cron-all">0</span>)
+            </button>
+            <button id="btn-cron-filter-dag" onclick="filterCronsByEngine('nexusdesk_dag')" class="px-2.5 py-1 rounded text-[11px] font-semibold transition text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-800 cursor-pointer">
+              <span>🔀 NexusDesk DAG</span> (<span id="count-cron-dag">0</span>)
+            </button>
+            <button id="btn-cron-filter-hermes" onclick="filterCronsByEngine('hermes_native')" class="px-2.5 py-1 rounded text-[11px] font-semibold transition text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-800 cursor-pointer">
+              <span>🪐 Hermes Native</span> (<span id="count-cron-hermes">0</span>)
+            </button>
+            <button id="btn-cron-filter-warroom" onclick="filterCronsByEngine('war_room_schedule')" class="px-2.5 py-1 rounded text-[11px] font-semibold transition text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-800 cursor-pointer">
+              <span>🤝 War Room</span> (<span id="count-cron-warroom">0</span>)
+            </button>
+            <button id="btn-cron-filter-sys" onclick="filterCronsByEngine('system_crontab')" class="px-2.5 py-1 rounded text-[11px] font-semibold transition text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-800 cursor-pointer">
+              <span>🖥️ System VPS</span> (<span id="count-cron-sys">0</span>)
+            </button>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-slate-500">🔍</span>
+            <input id="cron-search-input" type="text" oninput="handleCronSearch(this.value)" placeholder="Search cron job, prompt, skill..." class="w-full sm:w-60 bg-transparent text-slate-200 placeholder-slate-500 text-xs font-mono focus:outline-none" />
+            <button id="cron-search-clear" onclick="clearCronSearch()" class="hidden text-slate-500 hover:text-slate-300 text-xs px-1 cursor-pointer">&times;</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400 text-[11px]">
+                <th class="py-2 px-2.5 w-10 text-center">#</th>
+                <th class="py-2 px-3 min-w-[280px]">JOB NAME & SUMMARY</th>
+                <th class="py-2 px-3 min-w-[170px]">SCHEDULE</th>
+                <th class="py-2 px-3 min-w-[170px]">NEXT EXECUTION</th>
+                <th class="py-2 px-3 min-w-[90px]">STATUS</th>
+                <th class="py-2 px-2.5 w-16 text-center">ENABLED</th>
+                <th class="py-2 px-3 min-w-[140px] text-right">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="cron-table-body" class="divide-y divide-slate-800/60">
+              <!-- Populated via API -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 5B: 🔀 MULTI-AGENT WORKFLOWS (DEDICATED SUB-MENU) -->
+    <!-- ============================================================== -->

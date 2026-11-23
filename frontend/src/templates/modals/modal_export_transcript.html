@@ -1,0 +1,155 @@
+<!-- Modal: Save & Export Conversation Transcript Engine (BL-CHAT-28) -->
+  <div id="modal-export-transcript" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
+    <div class="bg-[#161b22] border border-slate-800 rounded-2xl w-full max-w-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      <!-- Pinned Header -->
+      <div class="flex justify-between items-center px-4 py-3 border-b border-slate-800 bg-[#161b22] shrink-0">
+        <div class="flex items-center gap-2.5">
+          <span class="text-base">💾</span>
+          <div>
+            <h2 id="export-modal-title" class="text-xs sm:text-sm font-bold text-white font-pixel">SAVE & ARCHIVE CONVERSATION</h2>
+            <p id="export-modal-subtitle" class="text-[10px] text-slate-400 font-mono mt-0.5">Snapshot sessions, distill to wiki, or export files</p>
+          </div>
+        </div>
+        <button onclick="closeExportModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 text-sm cursor-pointer">✕</button>
+      </div>
+
+      <!-- Tab Strip -->
+      <div class="flex items-center border-b border-slate-800 bg-slate-950/60 px-3 pt-2 gap-1 shrink-0 overflow-x-auto">
+        <button type="button" id="tab-btn-save-snapshot" onclick="switchSaveModalTab('snapshot')" class="px-3 py-1.5 rounded-t-lg text-xs font-mono font-semibold text-emerald-400 border-b-2 border-emerald-400 transition cursor-pointer">
+          💾 Save Snapshot
+        </button>
+        <button type="button" id="tab-btn-save-catalog" onclick="switchSaveModalTab('catalog')" class="px-3 py-1.5 rounded-t-lg text-xs font-mono font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition cursor-pointer">
+          🗂️ Browse & Restore
+        </button>
+        <button type="button" id="tab-btn-save-wiki" onclick="switchSaveModalTab('wiki')" class="px-3 py-1.5 rounded-t-lg text-xs font-mono font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition cursor-pointer">
+          🧠 Distill to Wiki
+        </button>
+        <button type="button" id="tab-btn-save-download" onclick="switchSaveModalTab('download')" class="px-3 py-1.5 rounded-t-lg text-xs font-mono font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition cursor-pointer">
+          📥 File Download
+        </button>
+      </div>
+
+      <!-- Tab 1: Save Snapshot Pane -->
+      <div id="save-pane-snapshot" class="p-4 flex-1 overflow-y-auto flex flex-col gap-3.5 text-xs custom-scrollbar">
+        <div>
+          <label class="block text-[11px] font-mono text-slate-300 font-bold mb-1">Session Snapshot Title</label>
+          <input type="text" id="snapshot-input-title" placeholder="e.g. Textile Bridge Architecture & Schema Plan" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-lg px-3 py-2 text-xs text-white font-mono placeholder-slate-600 outline-none" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-mono text-slate-300 font-bold mb-1">Tags (Comma-separated)</label>
+            <input type="text" id="snapshot-input-tags" placeholder="e.g. textile, bug-fix, sprint-1" class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-lg px-3 py-2 text-xs text-white font-mono placeholder-slate-600 outline-none" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono text-slate-300 font-bold mb-1">Target Scope</label>
+            <input type="text" id="snapshot-input-target" readonly class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-400 font-mono cursor-not-allowed outline-none" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-mono text-slate-300 font-bold mb-1">Description / Notes (Optional)</label>
+          <textarea id="snapshot-input-desc" rows="2" placeholder="Brief context or key outcome of this session..." class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-lg px-3 py-2 text-xs text-white font-mono placeholder-slate-600 outline-none custom-scrollbar"></textarea>
+        </div>
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
+          <span id="snapshot-turn-counter" class="text-[11px] font-mono text-slate-400">Total messages to save: 0</span>
+          <button type="button" id="btn-submit-save-snapshot" onclick="submitSaveSnapshot()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shadow-md">
+            <span>💾</span> <span>Save Snapshot</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Browse & Restore Catalog Pane -->
+      <div id="save-pane-catalog" class="hidden p-4 flex-1 overflow-y-auto flex flex-col gap-3 text-xs custom-scrollbar">
+        <div class="flex items-center gap-2">
+          <input type="text" id="catalog-search-input" oninput="renderSavedCatalogList()" placeholder="Search saved sessions by title or tags..." class="flex-1 bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg px-3 py-1.5 text-xs text-white font-mono placeholder-slate-600 outline-none" />
+          <button type="button" onclick="loadSavedSessionsCatalog()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono transition" title="Refresh catalog">🔄</button>
+        </div>
+        <div id="catalog-sessions-list" class="flex flex-col gap-2 min-h-[160px] max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Tab 3: Distill to Wiki / Memory Pane -->
+      <div id="save-pane-wiki" class="hidden p-4 flex-1 overflow-y-auto flex flex-col gap-3.5 text-xs custom-scrollbar">
+        <div>
+          <label class="block text-[11px] font-mono text-slate-300 font-bold mb-1">Knowledge Title / Document Name</label>
+          <input type="text" id="wiki-distill-title" placeholder="e.g. WarRoom_Decision_Summary" class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg px-3 py-2 text-xs text-white font-mono placeholder-slate-600 outline-none" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-mono text-slate-300 font-bold mb-1">Destination</label>
+            <select id="wiki-distill-folder" class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg px-3 py-2 text-xs text-white font-mono outline-none">
+              <option value="notes">Shared Wiki (wiki/notes/)</option>
+              <option value="war-room">War Room Archives (wiki/war-room/)</option>
+              <option value="memory">Agent Long-Term Memory (MEMORY.md)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono text-slate-300 font-bold mb-1">Target Agent</label>
+            <input type="text" id="wiki-distill-agent" readonly class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-400 font-mono cursor-not-allowed outline-none" />
+          </div>
+        </div>
+        <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+          <span class="text-[10px] font-mono text-slate-400">Writes markdown record to workspace</span>
+          <button type="button" id="btn-submit-distill-wiki" onclick="submitDistillWiki()" class="px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-mono font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shadow-md">
+            <span>🧠</span> <span>Distill to Vault</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 4: File Download Pane -->
+      <div id="save-pane-download" class="hidden p-4 sm:p-5 flex-1 overflow-y-auto flex flex-col gap-3 text-xs custom-scrollbar">
+        <p class="text-slate-300 font-mono text-[11px]">Select export format to download instantly to your device:</p>
+
+        <div class="grid grid-cols-1 gap-2.5">
+          <!-- Markdown (.md) -->
+          <button type="button" onclick="executeExport('md')" class="flex items-center justify-between p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/80 text-left transition group cursor-pointer shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-cyan-950 border border-cyan-800 flex items-center justify-center text-cyan-400 font-bold font-mono text-xs">.MD</div>
+              <div>
+                <strong class="text-slate-100 group-hover:text-cyan-300 text-xs block font-mono">Markdown Document</strong>
+                <span class="text-[10px] text-slate-400 block font-sans mt-0.5">Formatted dialogue with speaker headings, metadata, and timestamps</span>
+              </div>
+            </div>
+            <span class="text-cyan-400 font-mono text-xs font-bold group-hover:translate-x-0.5 transition-transform">Download →</span>
+          </button>
+
+          <!-- JSON (.json) -->
+          <button type="button" onclick="executeExport('json')" class="flex items-center justify-between p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/80 text-left transition group cursor-pointer shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-400 font-bold font-mono text-xs">.JSON</div>
+              <div>
+                <strong class="text-slate-100 group-hover:text-emerald-300 text-xs block font-mono">Structured JSON</strong>
+                <span class="text-[10px] text-slate-400 block font-sans mt-0.5">Machine-readable array with timestamps, roles, engines, and raw text</span>
+              </div>
+            </div>
+            <span class="text-emerald-400 font-mono text-xs font-bold group-hover:translate-x-0.5 transition-transform">Download →</span>
+          </button>
+
+          <!-- Plain Text (.txt) -->
+          <button type="button" onclick="executeExport('txt')" class="flex items-center justify-between p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/80 text-left transition group cursor-pointer shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400 font-bold font-mono text-xs">.TXT</div>
+              <div>
+                <strong class="text-slate-100 group-hover:text-amber-300 text-xs block font-mono">Plain Text Transcript</strong>
+                <span class="text-[10px] text-slate-400 block font-sans mt-0.5">Clean chronological log: [HH:MM:SS] Sender: Message</span>
+              </div>
+            </div>
+            <span class="text-amber-400 font-mono text-xs font-bold group-hover:translate-x-0.5 transition-transform">Download →</span>
+          </button>
+        </div>
+
+        <!-- Quick Copy Action -->
+        <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+          <span class="text-[10px] font-mono text-slate-400">Need text immediately?</span>
+          <button type="button" id="btn-copy-full-transcript" onclick="copyFullTranscriptToClipboard()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold border border-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+            <span>📋</span> <span id="label-copy-full-transcript">Copy Full Transcript</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pinned Footer -->
+      <div class="px-4 py-2.5 border-t border-slate-800 bg-[#161b22] flex justify-end shrink-0">
+        <button onclick="closeExportModal()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">Close</button>
+      </div>
+    </div>
+  </div>

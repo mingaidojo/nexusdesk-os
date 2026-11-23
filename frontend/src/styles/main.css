@@ -1,0 +1,543 @@
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --oceanic-canvas: #0d1117;
+      --oceanic-surface: #161b22;
+      --oceanic-elevated: #21262d;
+      --oceanic-border: #30363d;
+      --oceanic-primary: #58a6ff;
+      --oceanic-green: #3fb950;
+      --oceanic-purple: #bc8cff;
+      --oceanic-amber: #d29922;
+      --oceanic-red: #f85149;
+      --oceanic-text: #f0f6fc;
+      --oceanic-muted: #8b949e;
+    }
+
+    html {
+      color-scheme: dark;
+    }
+
+    body {
+      background-color: #0d1117 !important;
+      color: #f0f6fc !important;
+      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Modernized high-legibility header font (replaces retro arcade font on UI chrome) */
+    .font-pixel {
+      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif !important;
+      letter-spacing: -0.015em;
+      font-weight: 700;
+    }
+
+    /* Reserved for authentic retro pixel elements (canvas sprites, retro badges) */
+    .font-retro-pixel {
+      font-family: 'Press Start 2P', monospace !important;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Disable OpenType contextual ligatures (e.g. '://' and '...') inside editable inputs/textareas
+       so mobile/OS IME composition cursors never desynchronize when shaping multi-char ligatures */
+    textarea, input, [contenteditable] {
+      font-variant-ligatures: none !important;
+      font-feature-settings: "liga" 0, "calt" 0, "dlig" 0 !important;
+    }
+
+    canvas { image-rendering: pixelated; }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0d1117; }
+    ::-webkit-scrollbar-thumb { background: #21262d; border-radius: 3px; border: 1px solid #30363d; }
+    ::-webkit-scrollbar-thumb:hover { background: #30363d; }
+
+    .markdown-body h1 { font-size: 1.35rem; font-weight: 700; color: #3fb950; margin-bottom: 0.6rem; border-bottom: 1px solid #30363d; padding-bottom: 0.2rem; }
+    .markdown-body h2 { font-size: 1.15rem; font-weight: 600; color: #58a6ff; margin-top: 0.8rem; margin-bottom: 0.4rem; }
+    .markdown-body h3 { font-size: 1.02rem; font-weight: 600; color: #d29922; margin-top: 0.6rem; margin-bottom: 0.2rem; }
+    .markdown-body p { margin-bottom: 0.6rem; line-height: 1.55; color: #c9d1d9; font-size: 0.825rem; }
+    /* BL-EVO-30: Enforce strict viewport and horizontal overflow prevention */
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+    #tab-console, #console-warroom-view, #console-direct-view, #warroom-conversation, #chat-conversation {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    .markdown-body ul { list-style-type: disc; padding-left: 1.25rem; margin-bottom: 0.6rem; color: #8b949e; font-size: 0.825rem; }
+    .markdown-body li { margin-bottom: 0.2rem; }
+    .markdown-body code { background: #21262d; color: #58a6ff; padding: 0.15rem 0.35rem; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; border: 1px solid #30363d; }
+    .markdown-body pre { background: #161b22; padding: 0.75rem; border-radius: 6px; overflow-x: auto; margin-bottom: 0.6rem; border: 1px solid #30363d; position: relative; }
+    .markdown-body pre code { background: transparent; padding: 0; color: #f0f6fc; border: none; }
+    .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #21262d #0d1117; }
+
+    /* BL-CHAT-25: Spacious Fullscreen Console Mode */
+    #tab-console.spacious-fullscreen {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 9999 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      padding: 12px !important;
+      background-color: #0d1117 !important;
+      border-radius: 0 !important;
+      border: none !important;
+    }
+
+    /* BL-CHAT-26: One-Click Code Snippet & Message Copy Buttons */
+    .prose pre { position: relative !important; }
+    .code-copy-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      opacity: 0.65;
+      background: #21262d;
+      border: 1px solid #30363d;
+      transition: opacity 0.15s, background-color 0.15s;
+    }
+    .prose pre:hover .code-copy-btn { opacity: 1; }
+    .btn-copy-msg {
+      opacity: 0.75;
+      transition: opacity 0.15s, color 0.15s, background-color 0.15s;
+    }
+    .btn-copy-msg:hover { opacity: 1; }
+
+    /* BL-CHAT-31: Rich Formatting, GFM Tables & Clickable Links */
+    .prose-table-wrap {
+      width: 100%;
+      max-width: 100%;
+      margin: 0.6rem 0;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      background: rgba(13, 17, 23, 0.72);
+      overflow: hidden;
+    }
+    .prose-table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      padding: 4px 8px;
+      background: rgba(22, 27, 34, 0.85);
+      border-bottom: 1px solid #21262d;
+      opacity: 0.65;
+      transition: opacity 0.15s ease;
+    }
+    .prose-table-wrap:hover .prose-table-toolbar {
+      opacity: 1;
+    }
+    .prose-table-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #30363d;
+      background: #161b22;
+      color: #8b949e;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+    }
+    .prose-table-btn:hover {
+      color: #38bdf8;
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+    }
+    .prose-table-scroll {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    .prose table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+      font-size: 0.78rem;
+      background: transparent;
+      border: none;
+    }
+    .prose th {
+      background: #21262d;
+      color: #58a6ff;
+      font-weight: 600;
+      text-align: left;
+      padding: 6px 10px;
+      border-bottom: 1px solid #30363d;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .prose td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #21262d;
+      color: #c9d1d9;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      line-height: 1.45;
+    }
+    .prose td code, .prose th code {
+      white-space: normal;
+      word-break: break-all;
+    }
+    .prose tr:nth-child(even) td { background: rgba(255, 255, 255, 0.015); }
+    .prose tr:last-child td { border-bottom: none; }
+    .prose tr:hover td { background: rgba(56, 189, 248, 0.05); }
+    .prose a {
+      color: #38bdf8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color 0.15s;
+    }
+    .prose a:hover {
+      color: #7dd3fc;
+    }
+    .prose ul {
+      list-style-type: disc;
+      padding-left: 1.25rem;
+      margin: 0.4rem 0;
+    }
+    .prose ol {
+      list-style-type: decimal;
+      padding-left: 1.25rem;
+      margin: 0.4rem 0;
+    }
+    .prose li {
+      margin-bottom: 0.2rem;
+    }
+    .prose img {
+      max-height: 22rem;
+      width: auto;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(8, 145, 178, 0.5);
+      background: rgba(15, 23, 42, 0.8);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+      cursor: zoom-in;
+      transition: all 0.2s ease;
+    }
+    .prose img:hover {
+      border-color: rgba(6, 182, 212, 0.95);
+      transform: scale(1.01);
+    }
+
+    /* BL-CHAT-33: Heartbeat Shimmer Animation */
+    @keyframes shimmerAnim {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    .animate-shimmer {
+      animation: shimmerAnim 2.2s infinite ease-in-out;
+    }
+
+    /* BL-UI-39: Enforce hidden display override over Tailwind responsive grid/flex variants */
+    #console-direct-view.hidden,
+    #console-warroom-view.hidden {
+      display: none !important;
+    }
+
+    /* BL-UI-45 & BL-UI-50: Viewport Layout Architecture & Frictionless Scroll (dvh support) */
+    html.console-active-mode,
+    body.console-active-mode {
+      height: 100vh !important;
+      height: 100dvh !important;
+      max-height: 100vh !important;
+      max-height: 100dvh !important;
+      overflow: hidden !important;
+      width: 100vw !important;
+    }
+    body.console-active-mode #content-wrapper {
+      height: 100vh !important;
+      height: 100dvh !important;
+      max-height: 100vh !important;
+      max-height: 100dvh !important;
+      min-height: 0 !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      width: 100% !important;
+    }
+    body.console-active-mode header {
+      height: 2.75rem !important; /* Stitch h-11 44px compact profile */
+      flex-shrink: 0 !important;
+      min-height: 2.75rem !important;
+      max-height: 2.75rem !important;
+      padding-top: 0.25rem !important;
+      padding-bottom: 0.25rem !important;
+    }
+    body.console-active-mode main {
+      flex: 1 1 0% !important;
+      height: calc(100vh - 2.75rem - 1.75rem) !important;
+      height: calc(100dvh - 2.75rem - 1.75rem) !important;
+      max-height: calc(100vh - 2.75rem - 1.75rem) !important;
+      max-height: calc(100dvh - 2.75rem - 1.75rem) !important;
+      min-height: 0 !important;
+      overflow: hidden !important;
+      padding: 0.25rem 0.5rem 0.15rem 0.5rem !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    body.console-active-mode #main-footer.console-docked-footer {
+      height: 1.75rem !important;
+      min-height: 1.75rem !important;
+      max-height: 1.75rem !important;
+      padding: 0 0.5rem !important;
+      margin-top: 0 !important;
+      flex-shrink: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-top: 1px solid rgba(51, 65, 85, 0.4) !important;
+      background: #0d1117 !important;
+    }
+    body.console-active-mode #tab-console {
+      flex: 1 1 0% !important;
+      height: auto !important;
+      max-height: 100% !important;
+      min-height: 0 !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.35rem !important;
+    }
+    body.console-active-mode #console-warroom-view,
+    body.console-active-mode #console-direct-view {
+      flex: 1 1 0% !important;
+      height: auto !important;
+      max-height: 100% !important;
+      min-height: 0 !important;
+      overflow: hidden !important;
+    }
+    /* BL-UI-51: Option A Unified 100% Full-Width 1-on-1 Direct View (Agent dropdown in header) */
+    body.console-active-mode #console-direct-view:not(.hidden) {
+      display: flex !important;
+      flex-direction: column !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      max-height: 100% !important;
+      flex: 1 1 0% !important;
+      overflow: hidden !important;
+      gap: 0 !important;
+    }
+    body.console-active-mode #console-chat-column {
+      display: flex !important;
+      flex-direction: column !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      max-height: 100% !important;
+      flex: 1 1 0% !important;
+      overflow: hidden !important;
+    }
+        overflow: hidden !important;
+        flex-direction: column !important;
+        flex: 1 1 0% !important;
+      }
+    }
+    body.console-active-mode #warroom-conversation,
+    body.console-active-mode #chat-conversation {
+      flex: 1 1 0% !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      overflow-y: scroll !important;
+      overscroll-behavior-y: contain !important;
+      touch-action: pan-y !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+    body.console-active-mode #chat-drop-zone,
+    body.console-active-mode #warroom-drop-zone {
+      flex-shrink: 0 !important;
+      margin-top: auto !important;
+      /* BL-EVO-03: Ensure model selector is visible on small viewports */
+      min-width: 0 !important;
+      padding-bottom: 0.25rem !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* BL-EVO-17: Quick-Viewer Syntax Highlighting & Toggleable Line-Number Gutter */
+    #fs-quickview-code .hljs,
+    #fs-archive-entry-body .hljs {
+      background: transparent !important;
+      padding: 0 !important;
+      display: block;
+    }
+    #fs-quickview-code .fs-code-line,
+    .fs-with-ln .fs-code-line {
+      display: flex;
+      align-items: flex-start;
+      min-height: 1.45em;
+    }
+    #fs-quickview-code .fs-code-src,
+    .fs-with-ln .fs-code-src {
+      flex: 1 1 0%;
+      min-width: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    #fs-quickview-code.fs-with-ln .fs-code-line::before,
+    pre.fs-with-ln .fs-code-line::before {
+      content: attr(data-ln);
+      display: inline-block;
+      width: 3.4em;
+      padding-right: 0.75em;
+      margin-right: 0.85em;
+      text-align: right;
+      color: #475569;
+      border-right: 1px solid #1e293b;
+      user-select: none;
+      -webkit-user-select: none;
+      flex-shrink: 0;
+    }
+    #fs-quickview-code.fs-with-ln .fs-code-line:hover,
+    pre.fs-with-ln .fs-code-line:hover {
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    /* Unified NexusDesk Custom Select & Oceanic Glass Popover System */
+    .nexus-select-native {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      clip-path: inset(50%) !important;
+    }
+
+    .nexus-select-trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.45rem;
+      min-width: 0;
+      text-align: left;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease, color 0.16s ease;
+    }
+    .nexus-select-trigger.hidden {
+      display: none !important;
+    }
+
+    .nexus-select-surface {
+      background: linear-gradient(180deg, rgba(22, 27, 34, 0.96) 0%, rgba(13, 17, 23, 0.98) 100%);
+      border: 1px solid rgba(51, 65, 85, 0.85);
+      border-radius: 0.5rem;
+      padding: 0.35rem 0.6rem;
+      color: #e2e8f0;
+      font-size: 0.75rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 1px 2px rgba(0, 0, 0, 0.35);
+    }
+    .nexus-select-surface:hover:not(:disabled) {
+      border-color: rgba(34, 211, 238, 0.55);
+      background: linear-gradient(180deg, rgba(28, 35, 45, 0.98) 0%, rgba(15, 23, 34, 0.98) 100%);
+    }
+    .nexus-select-surface:focus-visible,
+    .nexus-select-surface.nexus-select-open {
+      outline: none;
+      border-color: rgba(34, 211, 238, 0.85);
+      box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .nexus-select-transparent {
+      background: transparent;
+      border: none;
+      padding: 0.125rem 0.2rem;
+    }
+    .nexus-select-transparent:focus-visible {
+      outline: none;
+    }
+
+    .nexus-select-chevron {
+      width: 0.82rem;
+      height: 0.82rem;
+      color: #64748b;
+      transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), color 0.16s ease;
+    }
+    .nexus-select-trigger:hover .nexus-select-chevron,
+    .nexus-select-trigger.nexus-select-open .nexus-select-chevron {
+      color: #22d3ee;
+    }
+    .nexus-select-trigger.nexus-select-open .nexus-select-chevron {
+      transform: rotate(180deg);
+    }
+
+    @keyframes nexusPopoverFadeIn {
+      from { opacity: 0; transform: translateY(4px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes nexusPopoverFadeInUp {
+      from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .nexus-popover-menu {
+      background: rgba(11, 16, 23, 0.97);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 0.75rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+      animation: nexusPopoverFadeIn 0.14s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .nexus-popover-menu[data-placement="top"] {
+      animation-name: nexusPopoverFadeInUp;
+    }
+
+    .nexus-popover-option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.42rem 0.62rem;
+      border-radius: 0.5rem;
+      border: 1px solid transparent;
+      font-family: 'JetBrains Mono', 'Inter', monospace;
+      font-size: 11.5px;
+      line-height: 1.35;
+      color: #cbd5e1;
+      background: transparent;
+      cursor: pointer;
+      transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+    }
+    .nexus-popover-option:hover:not(:disabled),
+    .nexus-popover-option:focus-visible:not(:disabled) {
+      outline: none;
+      background: rgba(30, 41, 59, 0.85);
+      color: #f8fafc;
+    }
+    .nexus-popover-option.is-selected {
+      background: rgba(8, 51, 68, 0.65);
+      border-color: rgba(34, 211, 238, 0.38);
+      color: #a5f3fc;
+      font-weight: 600;
+    }
+    .nexus-option-check {
+      width: 0.9rem;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      color: #22d3ee;
+    }
+
+
+
+
+
+
+

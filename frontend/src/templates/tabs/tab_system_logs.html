@@ -1,0 +1,40 @@
+<div id="tab-system-logs" class="hidden flex flex-col gap-6">
+
+  <!-- Top Overview Header -->
+  <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="w-10 h-10 rounded-xl bg-emerald-950/80 border border-emerald-800/80 flex items-center justify-center text-lg text-emerald-400 font-pixel">📜</span>
+        <div>
+          <h2 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+            <span>SYSTEMD JOURNAL & SERVICE LOGS</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5 font-mono">Live systemd journal viewer for nexusdesk.service with auto-scroll and quick refresh.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="refreshDaemonLogs()" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-300 text-xs font-mono flex items-center gap-1.5 transition cursor-pointer">
+          <span>🔄 Refresh Logs</span>
+        </button>
+        <span class="text-[9px] px-2 py-1 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono">
+          journalctl -u nexusdesk -n 60
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Logs Viewer Card -->
+  <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col gap-3">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-xs font-bold text-slate-200 font-mono">LIVE JOURNAL OUTPUT</span>
+      </div>
+      <div class="text-[11px] text-slate-500 font-mono">
+        Viewing last 60 journal entries
+      </div>
+    </div>
+    <pre id="daemon-systemd-logs" class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-[11px] font-mono text-emerald-400/90 overflow-x-auto min-h-[420px] max-h-[700px] overflow-y-auto custom-scrollbar select-text leading-relaxed">Loading journal logs...</pre>
+  </div>
+
+</div>

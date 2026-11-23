@@ -1,0 +1,141 @@
+<div id="tab-floor" class="flex flex-col gap-4">
+      
+      <!-- Top Canvas Controls & Status Bar -->
+      <div class="bg-[#161b22] border border-slate-800 rounded-xl p-3 sm:p-3.5 flex flex-wrap justify-between items-center shadow-lg gap-2.5 sm:gap-3">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+          <span class="text-xs font-pixel text-emerald-400">AGENTFLOOR</span>
+          <span class="text-[10px] bg-slate-900 text-slate-400 border border-slate-800 px-2 py-0.5 rounded font-mono hidden sm:inline-block">
+            VIRTUAL OFFICE • AUTONOMOUS AGENT SIMULATION
+          </span>
+          <span id="floor-activity-status" class="text-xs text-slate-400 font-mono w-full sm:w-auto">Normal operations • All 6 agents on duty</span>
+        </div>
+
+        <!-- Safe-Spaced Grouped Toolbar: [1. View & Theme] | [2. Simulation Commands] | [3. Voice & Audio] -->
+        <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <!-- CLUSTER 1: Viewport & Theme Dropdowns -->
+          <div class="flex items-center gap-1.5 bg-slate-950/80 border border-slate-800 rounded-xl px-2 py-1 shadow-inner">
+            <!-- Theme Selector -->
+            <div class="flex items-center bg-slate-900/90 border border-slate-700/80 rounded-lg px-1.5 py-0.5" title="Select Office Color & Material Theme">
+              <span class="text-[11px] select-none">🎨</span>
+              <select id="select-floor-theme" onchange="changeFloorTheme(this.value)" class="bg-transparent text-slate-200 text-[11px] font-mono px-1 py-0.5 rounded focus:outline-none cursor-pointer">
+                <option value="techloft" class="bg-[#161b22] text-amber-300">Tech Loft Oak</option>
+                <option value="cyberpunk" class="bg-[#161b22] text-cyan-300">Cyberpunk Dark</option>
+                <option value="retro8bit" class="bg-[#161b22] text-purple-300">Retro 8-Bit</option>
+                <option value="executive" class="bg-[#161b22] text-emerald-300">Executive Penthouse</option>
+              </select>
+            </div>
+
+            <!-- Room Visualization Mode Dropdown (Safe-Space) -->
+            <div class="flex items-center bg-slate-900/90 border border-cyan-800/70 rounded-lg px-1.5 py-0.5" title="Switch Room & Agent Visualization Engine">
+              <span class="text-[11px] select-none">👁️</span>
+              <select id="select-floor-view-mode" onchange="setFloorViewMode(this.value)" class="bg-transparent text-cyan-300 text-[11px] font-mono font-semibold px-1 py-0.5 rounded focus:outline-none cursor-pointer">
+                <option value="hd_loft" class="bg-[#161b22] text-amber-300">✨ Detailed Pixel Loft (HD)</option>
+                <option value="2d" class="bg-[#161b22] text-cyan-300">🗺️ 2D Blueprint</option>
+                <option value="3d" class="bg-[#161b22] text-emerald-300">🧊 3D Voxel (Iso)</option>
+              </select>
+            </div>
+
+            <!-- 3D Iso Camera Rotate Button (Shown only in 3D Voxel mode) -->
+            <button type="button" id="btn-iso-rotate" onclick="rotateIsoCamera()" class="px-2 py-1 rounded-lg bg-amber-950/60 border border-amber-700/70 text-[10px] font-mono font-bold transition text-amber-300 hover:text-amber-100 cursor-pointer hidden" title="Rotate Isometric Voxel Camera 90°">🔄 0°</button>
+          </div>
+
+          <!-- CLUSTER 2: Office Simulation Triggers (Team Briefing + Icon-Only Action Pills) -->
+          <div class="flex items-center gap-1.5 bg-slate-950/80 border border-slate-800 rounded-xl px-2 py-1 shadow-inner">
+            <button type="button" onclick="triggerBriefingSimulation()" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold flex items-center gap-1.5 shadow-sm transition cursor-pointer" title="Convene all agents at the Mission Briefing Board">
+              <span>📢</span>
+              <span>Team Briefing</span>
+            </button>
+            <div class="h-4 w-px bg-slate-800 mx-0.5"></div>
+            <button type="button" onclick="triggerGossipSimulation()" class="w-7 h-7 rounded-lg bg-slate-900 hover:bg-cyan-950/80 text-cyan-300 border border-slate-700/80 hover:border-cyan-600/70 text-xs flex items-center justify-center transition cursor-pointer shadow-sm" title="Water Cooler Break (Send idle agents to break room)">
+              <span>☕</span>
+            </button>
+            <button type="button" onclick="triggerRestroomBreak()" class="w-7 h-7 rounded-lg bg-slate-900 hover:bg-purple-950/80 text-purple-300 border border-slate-700/80 hover:border-purple-600/70 text-xs flex items-center justify-center transition cursor-pointer shadow-sm" title="Restroom Break (Send idle agent to restroom annex)">
+              <span>🚻</span>
+            </button>
+            <button type="button" onclick="resetAllToWork()" class="w-7 h-7 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 hover:border-emerald-600/70 text-xs flex items-center justify-center transition cursor-pointer shadow-sm" title="Back to Desks (Return all agents to primary workstations)">
+              <span>💻</span>
+            </button>
+          </div>
+
+          <!-- CLUSTER 3: Voice & Audio Controls -->
+          <div class="flex items-center gap-1.5 bg-slate-950/80 border border-slate-800 rounded-xl px-2 py-1 shadow-inner">
+            <!-- BL-VOICE-23: Bi-Directional Voice Chat Toggle on AgentFloor -->
+            <button type="button" id="btn-floor-bidir-voice" onclick="toggleHandsFreeVoice()" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 text-[11px] font-mono flex items-center gap-1.5 transition cursor-pointer shadow-sm" title="Switch ON/OFF continuous bi-directional voice chat between you and agents">
+              <span>🎙️</span>
+              <span id="floor-bidir-label" class="text-slate-300 font-mono">bi-direct</span>
+              <span id="floor-bidir-dot" class="w-2 h-2 rounded-full bg-black border border-slate-700"></span>
+            </button>
+
+            <!-- BL-AGF-14: Voice Announcement & Shout Volume Mode Toggle -->
+            <button type="button" id="btn-shouts-filter" onclick="cycleShoutsAudioMode()" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 text-[11px] font-mono flex items-center gap-1.5 transition cursor-pointer shadow-sm" title="Toggle situational agent voice announcements: ALL | CRITICAL ONLY | MUTED">
+              <span id="shouts-filter-icon">🔊</span>
+              <span class="text-slate-400 hidden sm:inline">Shouts:</span>
+              <span id="shouts-filter-label" class="font-bold text-emerald-400">ALL</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Hermes Runtime Activity Bar -->
+      <div id="hermes-runtime-banner" class="bg-[#161b22] border border-slate-800 rounded-xl px-3 sm:px-4 py-2.5 flex flex-wrap justify-between items-center text-xs font-mono shadow-md gap-2">
+        <div class="flex items-center gap-2.5">
+          <span id="runtime-status-dot" class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+          <span class="text-slate-400 font-semibold uppercase text-[10px] tracking-wider">HERMES RUNTIME SYNC:</span>
+          <span id="runtime-status-text" class="text-slate-300 text-xs">Connecting to live agent telemetry...</span>
+        </div>
+        <div id="runtime-active-badge" class="flex items-center gap-1.5 text-[11px] text-cyan-400">
+          <span class="text-slate-500 text-[10px]">Scanning turns...</span>
+        </div>
+      </div>
+
+      <!-- AgentFloor Pixel Office Canvas -->
+      <div class="relative bg-[#161b22] rounded-2xl overflow-hidden border border-slate-700 shadow-2xl flex justify-center items-center max-w-full overflow-x-auto select-none">
+        <canvas id="officeCanvas" width="1040" height="540" class="w-full max-w-full h-auto cursor-pointer block"></canvas>
+        <div id="canvas-tooltip" class="absolute pointer-events-none bg-slate-900/95 text-white text-[11px] px-3 py-1.5 rounded-lg border border-slate-700 hidden shadow-xl font-mono"></div>
+      </div>
+
+      <!-- Selectable Canvas Inspector Drawer (Appears when clicking canvas objects) -->
+      <div id="canvas-inspector-drawer" class="hidden bg-[#161b22] border border-cyan-800/80 rounded-xl p-4 shadow-xl select-text transition-all">
+        <div class="flex justify-between items-start gap-3">
+          <div class="flex items-center gap-2.5">
+            <span id="inspector-icon" class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center font-pixel text-sm text-cyan-400 shrink-0">🏛️</span>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 id="inspector-title" class="font-bold text-sm text-white font-pixel">INSPECTOR</h3>
+                <span id="inspector-badge" class="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">ACTIVE</span>
+              </div>
+              <p id="inspector-subtitle" class="text-xs text-slate-400 font-mono mt-0.5">Click any room, whiteboard, or workstation to inspect and copy metadata.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="copyInspectorDetails()" id="inspector-copy-btn" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono border border-slate-700 flex items-center gap-1 cursor-pointer">
+              <span>📋</span> <span>Copy Info</span>
+            </button>
+            <button type="button" onclick="closeInspectorDrawer()" class="text-slate-400 hover:text-white text-lg leading-none p-1 cursor-pointer">&times;</button>
+          </div>
+        </div>
+        <div id="inspector-content" class="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
+          <!-- Populated dynamically with selectable text -->
+        </div>
+      </div>
+
+      <!-- Canvas Floor Legend & Activity Keys -->
+      <div class="bg-[#161b22] border border-slate-800 rounded-xl p-3 flex flex-wrap justify-between items-center text-xs text-slate-400 gap-3">
+        <div class="flex items-center gap-4">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Focused Working</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> Strolling / Gossiping</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Checking Phone</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Snoozing at Desk (zzz)</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span> Whistling (♪ ♫)</span>
+        </div>
+        <div class="text-[11px] font-mono text-slate-500">
+          Click any agent desk to inspect & chat directly.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- TAB 2: 💬 VOICE & AGENT CONSOLE (BI-DIRECTIONAL CHAT & WAR ROOM) -->
+    <!-- ============================================================== -->

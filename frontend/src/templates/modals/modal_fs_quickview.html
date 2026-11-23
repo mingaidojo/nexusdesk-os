@@ -1,0 +1,139 @@
+<!-- Server Artifact Quick-Viewer Modal (BL-FILE-12) -->
+  <div id="modal-fs-quickview" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[120] hidden flex items-center justify-center p-2.5 sm:p-4 md:p-6 overflow-hidden">
+    <div class="bg-[#161b22] border border-cyan-800/80 rounded-2xl max-w-5xl w-full shadow-2xl flex flex-col h-[90vh] max-h-[860px] overflow-hidden">
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center px-4 py-3 sm:px-5 border-b border-slate-800 bg-[#0d1117] shrink-0">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span id="fs-quickview-icon" class="text-cyan-400 text-lg shrink-0">📄</span>
+          <div class="min-w-0">
+            <h3 id="fs-quickview-title" class="font-bold text-xs sm:text-sm text-slate-100 font-pixel truncate">ARTIFACT PREVIEW</h3>
+            <span id="fs-quickview-path" class="text-[10px] text-slate-400 font-mono truncate block select-all">/path/to/file</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="fs-quickview-newwin-btn" onclick="openCurrentPreviewInNewWindow()" class="px-2 py-1 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-cyan-300 text-xs font-mono transition flex items-center gap-1 cursor-pointer" title="Open in new window (full-screen)">
+            <span>⛶</span> <span class="hidden sm:inline">New Window</span>
+          </button>
+          <button id="fs-quickview-download-btn" onclick="downloadCurrentPreviewFile()" class="px-2.5 py-1 rounded-lg bg-cyan-950 border border-cyan-700 text-cyan-300 hover:bg-cyan-900 text-xs font-mono font-semibold transition flex items-center gap-1 cursor-pointer" title="Download file to local machine">
+            <span>⬇️</span> <span>Download</span>
+          </button>
+          <button onclick="closeFsQuickViewModal()" class="text-slate-400 hover:text-white text-xl leading-none p-1.5 cursor-pointer">&times;</button>
+        </div>
+      </div>
+
+      <!-- Modal Body Preview Area -->
+      <div class="p-3.5 sm:p-5 overflow-hidden flex-1 flex flex-col bg-slate-950/80 relative">
+        <!-- Text/Code/Markdown Preview Container -->
+        <div id="fs-quickview-text-container" class="hidden flex-1 flex flex-col min-h-0">
+          <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 mb-2 px-1 gap-2">
+            <span id="fs-quickview-meta" class="text-cyan-400 truncate">Loading...</span>
+            <div class="flex items-center gap-2 shrink-0">
+              <button id="fs-quickview-linenums-btn" onclick="toggleFsLineNumbers()" title="Toggle line numbers gutter" class="px-2 py-0.5 rounded bg-slate-800/80 border border-cyan-500/40 text-cyan-300 hover:bg-slate-700/80 transition text-[10px] flex items-center gap-1 cursor-pointer">
+                <span>🔢</span> <span id="fs-quickview-ln-lbl">Lines: ON</span>
+              </button>
+              <button onclick="copyCurrentPreviewContent()" class="text-slate-400 hover:text-slate-200 transition text-[10px] flex items-center gap-1 cursor-pointer">
+                <span>📋</span> <span id="fs-quickview-copy-lbl">Copy Content</span>
+              </button>
+            </div>
+          </div>
+          <pre id="fs-quickview-code" class="fs-with-ln flex-1 overflow-auto bg-[#090d13] border border-slate-800/80 rounded-xl p-3 text-slate-200 font-mono text-[11px] leading-relaxed whitespace-pre-wrap select-text custom-scrollbar"></pre>
+        </div>
+
+        <!-- HTML Sandboxed iframe Container -->
+        <div id="fs-quickview-html-container" class="hidden flex-1 flex flex-col min-h-0">
+          <div class="text-[10px] font-mono text-emerald-400 mb-1.5 flex items-center justify-between px-1">
+            <span>🌐 Interactive HTML Preview (Sandboxed Render)</span>
+            <span class="text-slate-500">Live Server Artifact</span>
+          </div>
+          <iframe id="fs-quickview-iframe" class="flex-1 w-full bg-white rounded-xl border border-slate-700 shadow-inner" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+
+        <!-- PDF Preview Container (native browser PDF viewer) -->
+        <div id="fs-quickview-pdf-container" class="hidden flex-1 flex flex-col min-h-0">
+          <div class="text-[10px] font-mono text-rose-300 mb-1.5 flex items-center justify-between px-1">
+            <span id="fs-quickview-pdf-label">📕 PDF Document</span>
+            <span id="fs-quickview-pdf-meta" class="text-slate-500"></span>
+          </div>
+          <iframe id="fs-quickview-pdf-frame" class="flex-1 w-full bg-slate-200 rounded-xl border border-slate-700 shadow-inner" src="about:blank"></iframe>
+        </div>
+
+        <!-- Markdown Preview Container -->
+        <div id="fs-quickview-md-container" class="hidden flex-1 flex flex-col min-h-0">
+          <div class="text-[10px] font-mono text-emerald-400 mb-1.5 flex items-center justify-between px-1">
+            <span>📝 Markdown (rendered)</span>
+            <button onclick="toggleFsPreviewRaw()" class="text-slate-400 hover:text-slate-200 cursor-pointer">Toggle Raw</button>
+          </div>
+          <div id="fs-quickview-md-body" class="flex-1 overflow-auto bg-[#0d1117] border border-slate-800/80 rounded-xl p-4 prose prose-invert prose-sm max-w-none text-slate-200 select-text custom-scrollbar"></div>
+        </div>
+
+        <!-- CSV / TSV / XLSX Table Preview Container -->
+        <div id="fs-quickview-table-container" class="hidden flex-1 flex flex-col min-h-0">
+          <div class="text-[10px] font-mono text-emerald-400 mb-1.5 flex items-center justify-between px-1">
+            <span id="fs-quickview-table-meta">📊 Data Table</span>
+            <button id="fs-quickview-raw-btn" onclick="toggleFsPreviewRaw()" class="text-slate-400 hover:text-slate-200 cursor-pointer">Toggle Raw</button>
+          </div>
+          <div id="fs-quickview-xlsx-tabs" class="hidden flex items-center gap-1.5 mb-2 overflow-x-auto pb-1 custom-scrollbar shrink-0"></div>
+          <div id="fs-quickview-table-body" class="flex-1 overflow-auto bg-[#0d1117] border border-slate-800/80 rounded-xl custom-scrollbar"></div>
+        </div>
+
+        <!-- Binary / Unsupported Container -->
+        <div id="fs-quickview-binary-container" class="hidden flex-1 flex flex-col items-center justify-center gap-3 text-center">
+          <div class="text-4xl">🗂️</div>
+          <div id="fs-quickview-binary-msg" class="text-xs font-mono text-slate-300 max-w-sm">No inline preview available for this file type.</div>
+          <button onclick="downloadCurrentPreviewFile()" class="px-3 py-1.5 rounded-lg bg-cyan-950 border border-cyan-700 text-cyan-300 hover:bg-cyan-900 text-xs font-mono cursor-pointer">⬇️ Download File</button>
+        </div>
+
+        <!-- Image Preview Container -->
+        <div id="fs-quickview-image-container" class="hidden flex-1 flex items-center justify-center p-4 min-h-0 overflow-auto">
+          <img id="fs-quickview-img" src="" alt="Artifact Preview" class="max-w-full max-h-full object-contain rounded-lg shadow-lg border border-slate-800" />
+        </div>
+
+        <!-- Archive (.zip / .tar.gz) Interactive Split-Pane Explorer Container -->
+        <div id="fs-quickview-archive-container" class="hidden flex-1 flex flex-col min-h-0 gap-2">
+          <!-- Archive Summary & Quick Picks Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-2 px-1 shrink-0">
+            <span id="fs-archive-meta" class="text-[10.5px] font-mono text-purple-300 font-semibold">📦 Archive</span>
+            <div id="fs-archive-quick-picks" class="flex flex-wrap items-center gap-1.5"></div>
+          </div>
+          <!-- Split Pane: File Tree (Left / Top) + Live Entry Preview (Right / Bottom) -->
+          <div class="flex-1 flex flex-col md:flex-row gap-2.5 min-h-0 overflow-hidden">
+            <div class="w-full md:w-72 lg:w-80 h-44 md:h-auto shrink-0 flex flex-col bg-[#0d1117] border border-slate-800 rounded-xl overflow-hidden">
+              <div class="p-2 border-b border-slate-800 bg-[#090d14]">
+                <input id="fs-archive-filter-input" type="text" oninput="filterFsArchiveEntries(this.value)" placeholder="🔍 Filter archive files..." autocomplete="off"
+                       class="w-full px-2.5 py-1 text-[11px] font-mono bg-slate-900/90 border border-slate-700/80 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500" />
+              </div>
+              <div id="fs-archive-tree" class="flex-1 overflow-y-auto custom-scrollbar p-1.5 space-y-0.5 font-mono text-[11px]"></div>
+            </div>
+            <div class="flex-1 min-w-0 min-h-0 flex flex-col bg-[#0d1117] border border-slate-800 rounded-xl overflow-hidden">
+              <div class="px-3 py-1.5 border-b border-slate-800 bg-[#090d14] flex items-center justify-between gap-2 shrink-0">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span id="fs-archive-entry-icon" class="text-xs shrink-0">📄</span>
+                  <span id="fs-archive-entry-title" class="text-[11px] font-mono text-cyan-200 font-semibold truncate">Select a file from archive</span>
+                  <span id="fs-archive-entry-meta" class="text-[9.5px] font-mono text-slate-500 hidden sm:inline shrink-0"></span>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button type="button" id="fs-archive-entry-raw-btn" onclick="toggleFsArchiveEntryRaw()" class="hidden px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[10px] font-mono cursor-pointer">Raw</button>
+                  <button type="button" id="fs-archive-entry-dl-btn" onclick="downloadCurrentArchiveEntry()" class="hidden px-2 py-0.5 rounded bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-700/80 text-[10px] font-mono font-semibold cursor-pointer">⬇️ Entry</button>
+                </div>
+              </div>
+              <div id="fs-archive-entry-body" class="flex-1 min-h-0 flex flex-col overflow-hidden p-2.5">
+                <div class="flex-1 flex items-center justify-center text-xs font-mono text-slate-500">Click any file in the archive tree to preview inline.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading / Error Spinner -->
+        <div id="fs-quickview-spinner" class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center gap-2">
+          <div class="w-7 h-7 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+          <span class="text-xs font-mono text-cyan-300">Reading server artifact...</span>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-4 py-2.5 sm:px-5 sm:py-3 border-t border-slate-800 bg-[#0d1117] flex justify-between items-center shrink-0">
+        <span class="text-[10px] text-slate-500 font-mono">Protected by NexusDesk Whitelisted File System</span>
+        <button onclick="closeFsQuickViewModal()" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer">Done</button>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,161 @@
+<!-- MODAL: SHARED WAR ROOM SANDBOX & STORAGE (BL-WAR-13) -->
+  <div id="modal-warroom-sandbox" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 overflow-hidden" onclick="if(event.target===this) closeWarRoomSandboxModal()">
+    <div class="bg-[#161b22] border border-cyan-700/80 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+      <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between shrink-0 bg-[#0d1117]">
+        <div class="flex items-center gap-2">
+          <span class="text-sky-400 text-base">💾</span>
+          <h3 class="font-bold text-white text-sm font-pixel">SHARED WAR ROOM SANDBOX</h3>
+        </div>
+        <button onclick="closeWarRoomSandboxModal()" class="text-slate-400 hover:text-white text-sm font-mono cursor-pointer">✕</button>
+      </div>
+
+      <div class="p-4 sm:p-5 flex flex-col gap-4 overflow-y-auto custom-scrollbar font-mono text-xs">
+        <div>
+          <span class="text-slate-400 text-[10px] uppercase tracking-wider block mb-1">Sandbox Filesystem Path</span>
+          <div id="sandbox-path-text" class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 text-sky-300 break-all select-all text-[11px]">/home/nexus_shared/sandboxes/...</div>
+          <span class="text-[10px] text-slate-500 mt-1 block font-sans">All fleet engines and agents share read/write access via <code class="text-slate-300">$WARROOM_SANDBOX</code>.</span>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-slate-400 text-[10px] uppercase tracking-wider">Disk Storage Quota</span>
+            <span id="sandbox-total-text" class="text-slate-200 font-bold">0 MB / 2048 MB</span>
+          </div>
+          <div class="w-full h-2.5 rounded-full bg-slate-900 border border-slate-800 overflow-hidden">
+            <div id="sandbox-usage-bar" class="h-full bg-cyan-500 transition-all duration-300" style="width: 2%;"></div>
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-slate-500 mt-1 font-sans">
+            <span id="sandbox-usage-percent">0% used</span>
+            <span>2 GB room limit</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+            <div class="flex items-center gap-1.5 text-emerald-400 text-[11px] font-bold mb-1">
+              <span>📁</span> <span>Deliverables</span>
+            </div>
+            <div id="sandbox-deliverables-text" class="text-slate-200 text-sm font-bold">0 MB (0 files)</div>
+            <p class="text-[10px] text-slate-400 font-sans mt-1">Final reports, CSV tables, charts, generated scripts.</p>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+            <div class="flex items-center gap-1.5 text-amber-400 text-[11px] font-bold mb-1">
+              <span>🧹</span> <span>Scratch (Temp)</span>
+            </div>
+            <div id="sandbox-scratch-text" class="text-slate-200 text-sm font-bold">0 MB (0 files)</div>
+            <p class="text-[10px] text-slate-400 font-sans mt-1">Raw scraping dumps, logs. Auto-pruned after 7 days.</p>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+          <div>
+            <div class="text-slate-200 font-bold text-xs">Prune Scratch (Temp Files)</div>
+            <div class="text-[10px] text-slate-400 font-sans">Delete all temporary execution logs, dumps, and cache. Deliverables are safe.</div>
+          </div>
+          <button type="button" onclick="pruneWarRoomScratchFiles()" class="px-3.5 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-600 text-white font-semibold transition cursor-pointer text-xs flex items-center gap-1.5 shrink-0">
+            <span>🧹</span> <span>Prune Scratch</span>
+          </button>
+        </div>
+
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+          <div>
+            <div class="text-slate-200 font-bold text-xs">Archive & Compress</div>
+            <div class="text-[10px] text-slate-400 font-sans">Bundle deliverables into .tar.gz and prune temporary scratch.</div>
+          </div>
+          <button type="button" onclick="archiveActiveWarRoomSandbox()" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition cursor-pointer text-xs flex items-center gap-1.5 shrink-0">
+            <span>📦</span> <span>Archive Room</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="px-4 py-3 border-t border-slate-800 bg-[#0d1117] flex justify-end shrink-0">
+        <button onclick="closeWarRoomSandboxModal()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ANTIGRAVITY-STYLE WAR ROOM CONTEXT & MEMORY ENGINE (BL-EVO-36) -->
+  <div id="modal-warroom-memory" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-3 overflow-hidden" onclick="if(event.target===this) closeWarRoomMemoryModal()">
+    <div class="bg-[#161b22] border border-purple-700/80 rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      <div class="px-4 py-2.5 sm:px-5 sm:py-3 border-b border-slate-800 flex items-center justify-between shrink-0 bg-[#0d1117]">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-purple-400 text-base">🧠</span>
+          <div>
+            <h3 class="font-bold text-white text-sm font-pixel">WAR ROOM SHARED MEMORY &amp; CONTEXT ENGINE</h3>
+            <div id="warroom-memory-subtitle" class="text-[10px] font-mono text-slate-400">Antigravity-Style 4-Pillar Context Compaction • Auto-Injected on Every Turn</div>
+          </div>
+        </div>
+        <button onclick="closeWarRoomMemoryModal()" class="text-slate-400 hover:text-white text-sm font-mono cursor-pointer">✕</button>
+      </div>
+
+      <div class="p-3 sm:p-4 flex flex-col gap-3 overflow-y-auto custom-scrollbar font-mono text-xs">
+        <!-- Stats Ribbon (Red Box Area: compact padding & safe space) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-center">
+          <div class="px-2 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800">
+            <div class="text-[9px] text-slate-400 uppercase tracking-tight">Substantive Turns</div>
+            <div id="warroom-mem-stat-turns" class="text-xs font-bold text-cyan-300 mt-0.5">0</div>
+          </div>
+          <div class="px-2 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800">
+            <div class="text-[9px] text-slate-400 uppercase tracking-tight">Compacted Turns</div>
+            <div id="warroom-mem-stat-compacted" class="text-xs font-bold text-purple-300 mt-0.5">0</div>
+          </div>
+          <div class="px-2 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800">
+            <div class="text-[9px] text-slate-400 uppercase tracking-tight">Deliverables Indexed</div>
+            <div id="warroom-mem-stat-files" class="text-xs font-bold text-emerald-300 mt-0.5">0</div>
+          </div>
+          <div class="px-2 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800">
+            <div class="text-[9px] text-slate-400 uppercase tracking-tight">Compaction Mode</div>
+            <div id="warroom-mem-stat-mode" class="text-[10.5px] font-bold text-amber-300 mt-0.5 truncate">Auto</div>
+          </div>
+        </div>
+
+        <!-- Pillar 1: Operator Pinned Directives (Blue Box Area: Shortened Single-Line Unwrapped Header) -->
+        <div>
+          <div class="flex items-center justify-between mb-1 gap-2">
+            <span class="text-emerald-400 text-[10.5px] font-bold uppercase tracking-wider truncate shrink-0">📌 1. Pinned Rules &amp; Guardrails</span>
+            <span class="text-[9px] text-slate-500 whitespace-nowrap text-right shrink-0">Locked • Never evicted</span>
+          </div>
+          <textarea id="warroom-mem-pinned-input" rows="2" placeholder="Optional: Pin strict room rules, target schemas, or constraints that every agent must obey on every turn..." class="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-lg p-2 text-[11px] text-slate-100 placeholder-slate-500 focus:outline-none custom-scrollbar"></textarea>
+        </div>
+
+        <!-- Pillar 2: Compacted Session Summary (Green Box Area: Reduced Vertical Height to 3 rows, visible scrollbar indicator, peek next sections) -->
+        <div>
+          <div class="flex items-center justify-between mb-1 gap-2">
+            <span class="text-purple-300 text-[10.5px] font-bold uppercase tracking-wider truncate shrink-0">🧠 2. Compacted Session Memory (&lt;CONTEXT_SUMMARY&gt;)</span>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <span class="text-[9px] text-purple-400/70 hidden sm:inline font-mono">↕ scrollable</span>
+              <button type="button" id="btn-warroom-compact-now" onclick="triggerWarRoomMemoryCompaction()" class="px-2 py-0.5 rounded bg-purple-950 hover:bg-purple-900 text-purple-200 border border-purple-700 text-[10px] font-bold cursor-pointer transition">⚡ Compact Now</button>
+            </div>
+          </div>
+          <div class="relative">
+            <textarea id="warroom-mem-summary-input" rows="3" placeholder="Auto-populates when conversation exceeds 12 substantive turns (or click '⚡ Compact Now' to distill immediately)..." class="w-full max-h-24 bg-slate-950 border border-slate-800 focus:border-purple-500 rounded-lg p-2 text-[11px] text-slate-200 placeholder-slate-500 focus:outline-none custom-scrollbar leading-relaxed"></textarea>
+          </div>
+        </div>
+
+        <!-- Pillar 3: Chronological User Requests Ledger -->
+        <div>
+          <span class="text-cyan-400 text-[10.5px] font-bold uppercase tracking-wider block mb-1">📋 3. Chronological Operator Requests (Auto-Pinned Mission Ledger)</span>
+          <div id="warroom-mem-requests-list" class="max-h-24 overflow-y-auto p-2 rounded-lg bg-slate-950 border border-slate-800 space-y-1 text-[11px] text-slate-300 custom-scrollbar">
+            <div class="text-slate-500 text-center py-2">No operator requests recorded yet.</div>
+          </div>
+        </div>
+
+        <!-- Pillar 4: Deterministic Deliverables & Artifact Registry -->
+        <div>
+          <span class="text-sky-400 text-[10.5px] font-bold uppercase tracking-wider block mb-1">📦 4. Auto-Indexed Deliverables &amp; Schemas Registry</span>
+          <div id="warroom-mem-artifacts-list" class="max-h-24 overflow-y-auto p-2 rounded-lg bg-slate-950 border border-slate-800 space-y-1 text-[11px] text-slate-300 custom-scrollbar">
+            <div class="text-slate-500 text-center py-2">No sandbox deliverables or scripts indexed yet.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4 py-2.5 sm:px-5 sm:py-3 border-t border-slate-800 bg-[#0d1117] flex items-center justify-between shrink-0">
+        <span id="warroom-mem-save-status" class="text-[10px] font-mono text-slate-400 truncate max-w-[200px] sm:max-w-none"></span>
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" onclick="saveWarRoomMemoryContext()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition cursor-pointer">💾 Save Memory Overrides</button>
+          <button type="button" onclick="closeWarRoomMemoryModal()" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>

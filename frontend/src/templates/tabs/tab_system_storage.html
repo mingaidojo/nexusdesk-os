@@ -1,0 +1,88 @@
+<div id="tab-system-storage" class="hidden flex flex-col gap-6">
+
+  <!-- Header + Disk Gauge -->
+  <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="w-10 h-10 rounded-xl bg-amber-950/80 border border-amber-800/80 flex items-center justify-center text-lg text-amber-400">🗄️</span>
+        <div>
+          <h2 class="text-xs font-bold text-slate-200 font-pixel">STORAGE &amp; ARCHIVAL</h2>
+          <p class="text-xs text-slate-400 mt-0.5 font-mono">Retention cleanup, War Room sandbox archives and disk watermark alerts.</p>
+        </div>
+      </div>
+      <button onclick="loadSystemStorage()" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-300 text-xs font-mono transition cursor-pointer">🔄 Refresh</button>
+    </div>
+    <div class="mt-4">
+      <div class="flex justify-between text-[11px] font-mono text-slate-400 mb-1">
+        <span id="stor-disk-label">Host disk: …</span>
+        <span id="stor-disk-pct" class="font-bold text-slate-200">–</span>
+      </div>
+      <div class="h-2.5 rounded-full bg-slate-900 border border-slate-800 overflow-hidden">
+        <div id="stor-disk-bar" class="h-full bg-emerald-500 transition-all" style="width:0%"></div>
+      </div>
+      <div id="stor-disk-warn" class="hidden mt-2 text-[11px] font-mono text-amber-300">⚠️ Disk usage is above your warning threshold.</div>
+    </div>
+  </div>
+
+  <!-- Retention Cleanup -->
+  <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col gap-4">
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <span class="text-xs font-bold text-slate-200 font-mono">🧹 RETENTION CLEANUP</span>
+      <span id="stor-last-run" class="text-[10px] font-mono text-slate-500">Never run</span>
+    </div>
+    <p class="text-[11px] text-slate-400 font-mono leading-relaxed">
+      Prunes old files in sandbox <code class="text-cyan-300">scratch/</code> folders, scratch <code class="text-cyan-300">.log</code> files and old pre-flight snapshots.
+      <strong class="text-emerald-300">Deliverables, uploads and voice models are never auto-deleted.</strong>
+      Put a file named <code class="text-cyan-300">.persist</code> inside a room's scratch folder to exempt it.
+    </p>
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 text-[11px] font-mono">
+      <label class="flex flex-col gap-1 text-slate-400">Scratch files older than (days)
+        <input id="pol-scratch-days" type="number" min="1" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-100 focus:outline-none focus:border-cyan-500" /></label>
+      <label class="flex flex-col gap-1 text-slate-400">Scratch logs older than (days)
+        <input id="pol-log-days" type="number" min="1" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-100 focus:outline-none focus:border-cyan-500" /></label>
+      <label class="flex flex-col gap-1 text-slate-400">Always keep newest snapshots
+        <input id="pol-snap-keep" type="number" min="1" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-100 focus:outline-none focus:border-cyan-500" /></label>
+      <label class="flex flex-col gap-1 text-slate-400">Prune older snapshots after (days)
+        <input id="pol-snap-days" type="number" min="1" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-100 focus:outline-none focus:border-cyan-500" /></label>
+      <label class="flex flex-col gap-1 text-slate-400">Disk warning threshold (%)
+        <input id="pol-disk-warn" type="number" min="50" max="99" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-100 focus:outline-none focus:border-cyan-500" /></label>
+      <label class="flex flex-col gap-1 text-slate-400">Auto-clean interval (hours)
+        <input id="pol-interval" type="number" min="1" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-100 focus:outline-none focus:border-cyan-500" /></label>
+    </div>
+    <label class="flex items-center gap-2 text-[11px] font-mono text-slate-300 cursor-pointer">
+      <input id="pol-auto" type="checkbox" class="accent-emerald-500" />
+      Enable scheduled automatic cleanup (also runs sooner when the disk passes the warning threshold)
+    </label>
+    <div class="flex flex-wrap items-center gap-2">
+      <button onclick="saveStoragePolicy()" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-mono font-bold transition cursor-pointer">💾 Save Policy</button>
+      <button onclick="previewStorageCleanup()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-mono font-bold transition cursor-pointer">👁 Dry-Run Preview</button>
+      <button onclick="runStorageCleanup()" class="px-3 py-1.5 rounded-lg bg-rose-900/80 hover:bg-rose-800 border border-rose-700 text-rose-100 text-xs font-mono font-bold transition cursor-pointer">🗑 Clean Now</button>
+      <span id="stor-policy-msg" class="text-[11px] font-mono text-slate-400"></span>
+    </div>
+    <div id="stor-cleanup-result" class="hidden bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] font-mono text-slate-300"></div>
+  </div>
+
+  <!-- Rooms -->
+  <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col gap-3">
+    <span class="text-xs font-bold text-slate-200 font-mono">📁 WAR ROOM SANDBOXES</span>
+    <div class="overflow-x-auto custom-scrollbar">
+      <table class="w-full text-[11px] font-mono text-left">
+        <thead class="text-slate-500 border-b border-slate-800">
+          <tr><th class="py-1.5 pr-3">Room Name</th><th class="pr-3">Room ID</th><th class="pr-3">Scratch</th><th class="pr-3">Deliverables</th><th class="text-right">Archive</th></tr>
+        </thead>
+        <tbody id="stor-rooms-body"><tr><td colspan="5" class="py-3 text-slate-500">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <div id="stor-other" class="grid grid-cols-2 lg:grid-cols-4 gap-2 text-[10px] font-mono"></div>
+  </div>
+
+  <!-- Archives -->
+  <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col gap-3">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-bold text-slate-200 font-mono">📦 ARCHIVES</span>
+      <span class="text-[10px] font-mono text-slate-500">Archives are never auto-deleted</span>
+    </div>
+    <div id="stor-archives" class="flex flex-col gap-1.5 text-[11px] font-mono"></div>
+  </div>
+
+</div>

@@ -1,0 +1,71 @@
+<!-- Quick Engine LLM Picker Modal for War Room Panelists & Roster (BL-MOD-31) -->
+  <div id="modal-quick-model-picker" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[130] hidden flex items-center justify-center p-2.5 sm:p-4 overflow-hidden" onclick="if(event.target===this) closeQuickModelPickerModal()">
+    <div class="bg-[#161b22] border border-cyan-700/80 rounded-2xl max-w-md w-full shadow-2xl flex flex-col max-h-[82vh] overflow-hidden font-mono">
+      <div class="flex justify-between items-center px-4 py-3 border-b border-slate-800 bg-[#0d1117] shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-base">🧠</span>
+          <div class="min-w-0">
+            <h3 id="quick-model-picker-title" class="font-bold text-xs sm:text-sm text-slate-100 font-pixel truncate">SELECT LLM FOR AGENT</h3>
+            <span id="quick-model-picker-subtitle" class="text-[10px] text-cyan-400 truncate block">ENGINE: CLAUDE</span>
+          </div>
+        </div>
+        <button onclick="closeQuickModelPickerModal()" class="text-slate-400 hover:text-white text-lg leading-none p-1 cursor-pointer">&times;</button>
+      </div>
+
+      <input type="hidden" id="quick-model-picker-agent" value="" />
+      <input type="hidden" id="quick-model-picker-engine" value="" />
+      <input type="hidden" id="quick-model-picker-fleet" value="" />
+
+      <!-- Room Specialists Tabs Bar (BL-WAR-24: Instant Switcher) -->
+      <div id="quick-model-picker-agents-bar" class="hidden px-3.5 pt-2.5 pb-1 border-b border-slate-800/80 bg-slate-950/60 shrink-0">
+        <label class="text-[9px] text-slate-400 block mb-1 uppercase font-bold tracking-wider">War Room Specialists:</label>
+        <div id="quick-model-picker-agent-tabs" class="flex items-center gap-1.5 overflow-x-auto py-0.5 custom-scrollbar">
+          <!-- Dynamically populated room participant tabs -->
+        </div>
+      </div>
+
+      <!-- Scope Selector (BL-WAR-23: Room vs Global) -->
+      <div id="quick-model-picker-scope-box" class="px-3.5 pt-3 pb-1 shrink-0">
+        <label class="text-[9.5px] text-slate-400 block mb-1 uppercase font-bold tracking-wider">Override Scope:</label>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <label class="flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-cyan-800/80 cursor-pointer hover:bg-slate-800 transition">
+            <input type="radio" name="quick-model-scope" id="quick-model-scope-room" value="room" checked class="text-cyan-500 focus:ring-0">
+            <div class="min-w-0">
+              <span id="quick-model-scope-room-label" class="block font-bold text-[11px] text-cyan-300 truncate">This Room Only</span>
+              <span class="block text-[8.5px] text-slate-400 leading-tight">Scoped to active room</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer hover:bg-slate-800 transition">
+            <input type="radio" name="quick-model-scope" id="quick-model-scope-global" value="global" class="text-indigo-500 focus:ring-0">
+            <div class="min-w-0">
+              <span class="block font-bold text-[11px] text-indigo-300 truncate">Global Default</span>
+              <span class="block text-[8.5px] text-slate-400 leading-tight">All rooms & direct chat</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Instant Feedback Notification Banner -->
+      <div id="quick-model-picker-feedback" class="hidden mx-3.5 mt-2 px-3 py-2 rounded-xl border text-xs font-mono transition animate-in fade-in duration-200">
+        <!-- Success or alert message -->
+      </div>
+
+      <div class="p-3.5 overflow-y-auto flex-1 custom-scrollbar space-y-2.5 text-xs">
+        <div id="quick-model-picker-list" class="space-y-1.5">
+          <!-- Dynamically populated compatible LLMs -->
+        </div>
+
+        <div class="pt-2 border-t border-slate-800/80">
+          <label class="text-[10px] text-slate-400 block mb-1 uppercase">Or enter custom model slug:</label>
+          <div class="flex gap-1.5">
+            <input id="quick-model-picker-custom" type="text" placeholder="e.g. claude-sonnet-5-5 or gemini-4-argon-high" class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-cyan-300 focus:outline-none focus:border-cyan-500 font-mono" />
+            <button type="button" onclick="applyCustomQuickModel()" class="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold transition cursor-pointer shrink-0">Apply</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4 py-2.5 border-t border-slate-800 bg-[#0d1117] flex justify-end shrink-0">
+        <button onclick="closeQuickModelPickerModal()" class="px-3.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">Close</button>
+      </div>
+    </div>
+  </div>

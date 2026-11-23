@@ -1,0 +1,40 @@
+<div id="tab-tools-configured" class="hidden flex flex-col gap-5">
+      <!-- Clean Top Sub-Nav (Dedicated View Switcher) -->
+      <div class="bg-[#161b22]/95 border border-slate-800/90 p-2.5 rounded-xl flex flex-wrap items-center gap-2 shadow-lg">
+        <button type="button" onclick="switchMainTab('tools-matrix')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-cyan-300 transition flex items-center gap-1.5">
+          <span>⚡</span> <span>Privilege Matrix</span>
+        </button>
+        <button type="button" onclick="switchMainTab('tools-configured')" class="px-3 py-1.5 rounded-lg bg-emerald-900/60 border border-emerald-500/80 text-xs font-mono text-emerald-200 font-bold transition flex items-center gap-1.5 shadow-sm">
+          <span>🖥️</span> <span>Configured Daemons</span>
+        </button>
+        <button type="button" onclick="switchMainTab('tools-catalog')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-amber-300 transition flex items-center gap-1.5">
+          <span>📦</span> <span>Verified Catalog (18)</span>
+        </button>
+        <button type="button" onclick="openMcpConfigModal('')" class="px-3 py-1.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-xs font-mono text-white transition flex items-center gap-1.5 ml-auto">
+          <span>➕</span> <span>Add Custom Server</span>
+        </button>
+      </div>
+
+      <!-- Active Configured MCP Servers -->
+      <div id="tools-section-configured" class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+              <span>⚡</span> <span>CONFIGURED MCP SERVERS</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5 font-mono">Model Context Protocol daemon connectors active in config.yaml for current fleet.</p>
+          </div>
+          <button onclick="openMcpConfigModal('')" class="px-3.5 py-1.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-sm">
+            <span>➕</span> <span>Add Custom MCP Server</span>
+          </button>
+        </div>
+
+        <div id="mcp-servers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- DEDICATED PAGE 3: 📦 TOOLS & MCP: VERIFIED CATALOG -->
+    <!-- ============================================================== -->

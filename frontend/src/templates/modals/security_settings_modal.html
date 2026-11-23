@@ -1,0 +1,68 @@
+<!-- Security & Authentication Settings Modal -->
+  <div id="security-settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-2.5 sm:p-4 md:p-6 overflow-hidden">
+    <div class="bg-[#161b22] border border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl flex flex-col max-h-[calc(100vh-1.5rem)] sm:max-h-[88vh] overflow-hidden">
+      <!-- Pinned Header -->
+      <div class="flex justify-between items-center px-4 py-3 sm:px-5 border-b border-slate-800 bg-[#161b22] shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-emerald-950 border border-emerald-800 flex items-center justify-center text-xs text-emerald-400 font-pixel">🛡️</span>
+          <div>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-100 font-pixel">SECURITY & AUTHENTICATION</h3>
+            <span class="text-[9px] sm:text-[10px] text-slate-400 font-mono">NEXUSDESK ACCESS CONTROLS</span>
+          </div>
+        </div>
+        <button onclick="closeSecuritySettingsModal()" class="text-slate-400 hover:text-white text-lg leading-none p-1 cursor-pointer">&times;</button>
+      </div>
+
+      <!-- Scrollable Body -->
+      <div class="space-y-3.5 text-xs font-mono p-3.5 sm:p-5 overflow-y-auto flex-1 custom-scrollbar">
+        <!-- Status Banner -->
+        <div id="modal-sec-status-banner" class="p-3 rounded-xl border flex items-center justify-between bg-slate-900/60 border-slate-800">
+          <div>
+            <div class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Current State</div>
+            <div id="modal-sec-status-text" class="text-xs font-bold text-slate-300">🔓 Inactive (Development Mode)</div>
+          </div>
+          <button id="modal-sec-toggle-btn" onclick="toggleSecurityAuthMode()" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm cursor-pointer">
+            <span>Enable Auth</span>
+          </button>
+        </div>
+
+        <p class="text-[11px] text-slate-400 leading-relaxed">
+          When authentication is <strong>Inactive (Default)</strong>, NexusDesk runs in frictionless development mode without requiring secret keys. When <strong>Active</strong>, all API requests and websocket connections require your Master Secret Key.
+        </p>
+
+        <!-- Secret Key Box -->
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+          <div class="flex justify-between items-center">
+            <label class="text-slate-300 font-semibold text-xs flex items-center gap-1.5">
+              <span>🔑</span> <span>NexusDesk Master Secret Key</span>
+            </label>
+            <button onclick="regenerateSecretKey()" class="text-[10px] text-rose-400 hover:text-rose-300 underline font-mono cursor-pointer">Regenerate</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <input id="modal-sec-key-input" type="password" readonly class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-cyan-300 font-mono text-xs focus:outline-none" />
+            <button onclick="toggleSecKeyVisibility()" id="btn-sec-toggle-vis" class="px-2.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs cursor-pointer">👁️</button>
+            <button onclick="copySecurityKey()" class="px-2.5 py-2 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white text-xs font-semibold cursor-pointer">Copy</button>
+          </div>
+        </div>
+
+        <!-- 1-Click Fast Unlock URL -->
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+          <div class="flex justify-between items-center">
+            <label class="text-slate-300 font-semibold text-xs flex items-center gap-1.5">
+              <span>🌐</span> <span>1-Click Fast Unlock URL</span>
+            </label>
+            <button onclick="copySecurityUnlockUrl()" class="text-[10px] text-cyan-400 hover:text-cyan-300 underline font-mono cursor-pointer">Copy URL</button>
+          </div>
+          <input id="modal-sec-url-input" type="text" readonly class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-slate-400 font-mono text-[11px] truncate focus:outline-none" />
+          <div class="text-[10px] text-slate-500">
+            Bookmark or open this URL on any browser to automatically authenticate and store token in localStorage.
+          </div>
+        </div>
+      </div>
+
+      <!-- Pinned Footer -->
+      <div class="px-4 py-2.5 sm:px-5 sm:py-3 border-t border-slate-800 bg-[#161b22] flex justify-end gap-2 shrink-0 z-10">
+        <button onclick="closeSecuritySettingsModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition cursor-pointer">Close</button>
+      </div>
+    </div>
+  </div>

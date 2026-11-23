@@ -1,0 +1,143 @@
+<!-- Upgraded Intuitive Human Cron Modal -->
+  <div id="cron-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-2.5 sm:p-4 md:p-6 overflow-hidden">
+    <div class="bg-[#161b22] border border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl flex flex-col max-h-[calc(100vh-1.5rem)] sm:max-h-[88vh] overflow-hidden">
+      <!-- Pinned Header -->
+      <div class="flex justify-between items-center px-4 py-3 sm:px-5 border-b border-slate-800 bg-[#161b22] shrink-0">
+        <div>
+          <h3 id="cron-modal-title" class="font-bold text-xs sm:text-sm text-slate-100 font-pixel">EDIT CRON JOB</h3>
+          <span class="text-[9px] sm:text-[10px] text-slate-400 font-mono">Intuitive schedule setup with automatic server timezone conversion</span>
+        </div>
+        <button onclick="closeCronModal()" class="text-slate-400 hover:text-white text-lg leading-none p-1 cursor-pointer">&times;</button>
+      </div>
+      <input type="hidden" id="modal-cron-id" />
+      
+      <!-- Scrollable Body -->
+      <div class="space-y-3.5 text-xs p-3.5 sm:p-5 overflow-y-auto flex-1 custom-scrollbar">
+        <div>
+          <label class="text-slate-300 font-semibold block mb-1">Job Name</label>
+          <input id="modal-cron-name" type="text" placeholder="e.g. Daily Devotion Broadcast" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono text-xs focus:outline-none focus:border-cyan-500" />
+        </div>
+
+        <!-- Human Intuitive Schedule Mode Selector -->
+        <div>
+          <label class="text-slate-300 font-semibold block mb-1.5">Schedule Type (Intuitive Human Setting)</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-2">
+            <button type="button" onclick="setCronBuilderMode('daily')" id="cron-tab-daily" class="p-1.5 sm:p-2 rounded-lg border border-emerald-600 bg-emerald-950/70 text-emerald-300 font-semibold text-center text-xs transition cursor-pointer">
+              📅 Daily at Time
+            </button>
+            <button type="button" onclick="setCronBuilderMode('interval')" id="cron-tab-interval" class="p-1.5 sm:p-2 rounded-lg border border-slate-800 bg-slate-900/60 text-slate-400 font-semibold text-center text-xs hover:border-slate-700 transition cursor-pointer">
+              ⏱️ Every X Hours
+            </button>
+            <button type="button" onclick="setCronBuilderMode('weekly')" id="cron-tab-weekly" class="p-1.5 sm:p-2 rounded-lg border border-slate-800 bg-slate-900/60 text-slate-400 font-semibold text-center text-xs hover:border-slate-700 transition cursor-pointer">
+              📆 Weekly Day
+            </button>
+            <button type="button" onclick="setCronBuilderMode('custom')" id="cron-tab-custom" class="p-1.5 sm:p-2 rounded-lg border border-slate-800 bg-slate-900/60 text-slate-400 font-semibold text-center text-xs hover:border-slate-700 transition cursor-pointer">
+              ⚙️ Custom Cron
+            </button>
+          </div>
+
+          <!-- Mode 1: Daily at time -->
+          <div id="cron-builder-daily" class="space-y-2 bg-slate-950/80 p-2.5 sm:p-3 rounded-lg border border-slate-800/80">
+            <div class="flex items-center gap-3">
+              <label class="text-slate-400 font-mono text-[11px]">Run Daily at:</label>
+              <input type="time" id="cron-daily-time" value="07:00" onchange="syncCronFromHumanBuilder()" class="bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-emerald-400 font-mono text-sm focus:outline-none" />
+              <span id="cron-daily-tz-badge" class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-mono text-[10px] font-bold">GMT+7 (Local)</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Picks the time in your local timezone; converted automatically for the Berlin server.</p>
+          </div>
+
+          <!-- Mode 2: Every X Hours -->
+          <div id="cron-builder-interval" class="space-y-2 bg-slate-950/80 p-2.5 sm:p-3 rounded-lg border border-slate-800/80 hidden">
+            <div class="flex items-center gap-3">
+              <label class="text-slate-400 font-mono text-[11px]">Repeat Every:</label>
+              <select id="cron-interval-hours" onchange="syncCronFromHumanBuilder()" class="bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-cyan-400 font-mono text-xs focus:outline-none">
+                <option value="1">Every 1 hour (0 * * * *)</option>
+                <option value="2" selected>Every 2 hours (0 */2 * * *)</option>
+                <option value="3">Every 3 hours (0 */3 * * *)</option>
+                <option value="4">Every 4 hours (0 */4 * * *)</option>
+                <option value="6">Every 6 hours (0 */6 * * *)</option>
+                <option value="12">Every 12 hours (0 */12 * * *)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Mode 3: Weekly Day -->
+          <div id="cron-builder-weekly" class="space-y-2 bg-slate-950/80 p-2.5 sm:p-3 rounded-lg border border-slate-800/80 hidden">
+            <div class="flex flex-wrap items-center gap-3">
+              <label class="text-slate-400 font-mono text-[11px]">Day of Week:</label>
+              <select id="cron-weekly-day" onchange="syncCronFromHumanBuilder()" class="bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-cyan-400 font-mono text-xs">
+                <option value="1" selected>Monday</option>
+                <option value="2">Tuesday</option>
+                <option value="3">Wednesday</option>
+                <option value="4">Thursday</option>
+                <option value="5">Friday</option>
+                <option value="6">Saturday</option>
+                <option value="0">Sunday</option>
+              </select>
+              <label class="text-slate-400 font-mono text-[11px]">at:</label>
+              <input type="time" id="cron-weekly-time" value="09:00" onchange="syncCronFromHumanBuilder()" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-emerald-400 font-mono text-xs" />
+            </div>
+          </div>
+
+          <!-- Mode 4: Custom Cron Expression -->
+          <div id="cron-builder-custom" class="space-y-2 bg-slate-950/80 p-2.5 sm:p-3 rounded-lg border border-slate-800/80 hidden">
+            <label class="text-slate-400 font-mono text-[11px] block">Standard 5-field Cron Expression (Server time):</label>
+            <input id="modal-cron-expr" type="text" oninput="onCustomCronExprInput()" placeholder="0 2 * * *" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-cyan-400 font-mono text-xs" />
+            <div class="flex flex-wrap gap-1.5 text-[10px] text-slate-500 font-mono mt-1">
+              <span>Quick:</span>
+              <button type="button" onclick="setRawCron('0 2 * * *')" class="hover:text-cyan-400 underline">0 2 * * * (Daily 2am)</button>
+              <span>•</span>
+              <button type="button" onclick="setRawCron('0 */2 * * *')" class="hover:text-cyan-400 underline">0 */2 * * * (2hr)</button>
+              <span>•</span>
+              <button type="button" onclick="setRawCron('0 8 * * 1')" class="hover:text-cyan-400 underline">0 8 * * 1 (Mon 8am)</button>
+            </div>
+          </div>
+
+          <!-- Live Conversion Preview Summary -->
+          <div id="cron-builder-preview" class="mt-2.5 p-2.5 rounded-lg bg-slate-900/90 border border-cyan-900/60 flex items-start gap-2">
+            <span class="text-cyan-400 text-sm mt-0.5">ℹ️</span>
+            <div class="text-[11px] font-mono leading-relaxed">
+              <div id="cron-preview-human" class="text-emerald-300 font-semibold">Runs every day at 07:00 AM (GMT+7)</div>
+              <div id="cron-preview-server" class="text-slate-400 text-[10px]">Server: 02:00 CEST &bull; Expression: <code class="text-cyan-300 font-bold">0 2 * * *</code></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Target Type Selector: Single Prompt vs Multi-Agent Workflow (BL-AUTO-35) -->
+        <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800 space-y-2.5">
+          <label class="text-slate-300 font-semibold block text-xs">Target Execution Type</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="setCronTargetType('prompt')" id="cron-target-btn-prompt" class="p-2 rounded-lg border border-cyan-500 bg-cyan-950/70 text-cyan-300 font-mono text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer">
+              <span>💬</span> <span>Single Prompt Task</span>
+            </button>
+            <button type="button" onclick="setCronTargetType('workflow')" id="cron-target-btn-workflow" class="p-2 rounded-lg border border-slate-800 bg-slate-900/60 text-slate-400 font-mono text-xs font-bold flex items-center justify-center gap-1.5 hover:border-slate-700 transition cursor-pointer">
+              <span>🔀</span> <span>Multi-Agent Workflow</span>
+            </button>
+          </div>
+
+          <!-- Section A: Single Prompt Input -->
+          <div id="cron-target-sec-prompt" class="space-y-1">
+            <label class="text-slate-400 text-[11px] font-mono block">Execution Prompt Directive</label>
+            <textarea id="modal-cron-prompt" rows="3" placeholder="Task prompt directive dispatched to the agent..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-200 font-mono text-xs leading-relaxed focus:outline-none focus:border-cyan-600 resize-y"></textarea>
+          </div>
+
+          <!-- Section B: Workflow Selector -->
+          <div id="cron-target-sec-workflow" class="space-y-2 hidden">
+            <label class="text-slate-400 text-[11px] font-mono block">Select Multi-Agent Pipeline to Trigger</label>
+            <select id="modal-cron-workflow-id" onchange="onCronWorkflowSelected()" class="w-full bg-slate-900 border border-cyan-700/80 rounded-lg p-2 text-cyan-300 font-mono text-xs focus:outline-none">
+              <!-- Populated dynamically via workflows API -->
+            </select>
+            <div id="cron-workflow-preview-box" class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 text-[11px] font-mono text-slate-300">
+              <!-- Workflow steps summary dynamically shown here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pinned Footer -->
+      <div class="px-4 py-2.5 sm:px-5 sm:py-3 border-t border-slate-800 bg-[#161b22] flex justify-end gap-2 shrink-0 z-10">
+        <button onclick="closeCronModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">Cancel</button>
+        <button onclick="submitSaveCron()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition shadow-md cursor-pointer">Save Cron Job</button>
+      </div>
+    </div>
+  </div>

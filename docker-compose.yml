@@ -1,0 +1,14 @@
+services:
+  nexusdesk:
+    build: .
+    container_name: nexusdesk
+    ports:
+      - "${NEXUSDESK_PORT:-9200}:9200"
+    env_file:
+      - .env
+    environment:
+      - NEXUSDESK_HOST=0.0.0.0
+      - NEXUSDESK_PORT=9200
+    volumes:
+      - ./backend/data:/app/backend/data
+    restart: unless-stopped

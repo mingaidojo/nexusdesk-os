@@ -1,0 +1,337 @@
+<!-- Chat Agents Modals: Isolated Crons, Simulator, Backlog, History & Evolutions -->
+<!-- ===================================================================== -->
+<!-- CHAT AGENTS: UNIFIED SCHEDULES & REMINDERS MANAGER (FULL CRUD)       -->
+<!-- ===================================================================== -->
+<div id="modal-chat-agent-crons" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+  <div class="bg-[#161b22] border border-slate-700 rounded-2xl w-full max-w-4xl shadow-2xl flex flex-col overflow-hidden my-auto max-h-[92vh]">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between flex-wrap gap-2 bg-slate-900/60 shrink-0">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">⏰</span>
+        <div>
+          <h3 class="text-xs font-bold text-slate-100 font-pixel uppercase">AGENT SCHEDULES &amp; REMINDERS</h3>
+          <p id="ca-cron-agent-subtitle" class="text-[10px] text-slate-400 font-mono">Full Admin &amp; Agent CRUD • Internal Scheduler</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap font-mono text-[11px]">
+        <div class="flex items-center bg-slate-950 border border-slate-800 rounded-lg p-0.5">
+          <button onclick="setScheduleFilter('all')" id="ca-sched-filter-all" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-100 font-bold transition">All</button>
+          <button onclick="setScheduleFilter('reminder')" id="ca-sched-filter-reminder" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-200 transition">Reminders</button>
+          <button onclick="setScheduleFilter('recurring')" id="ca-sched-filter-recurring" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-slate-200 transition">Recurring</button>
+        </div>
+        <button onclick="openScheduleEditorForm()" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-[11px] transition">
+          + New Schedule / Reminder
+        </button>
+        <button onclick="closeChatAgentModal('modal-chat-agent-crons')" class="text-slate-400 hover:text-slate-200 text-lg font-mono ml-1">✕</button>
+      </div>
+    </div>
+
+    <div class="p-4 sm:p-5 space-y-4 overflow-y-auto text-xs font-mono flex-1">
+      <input type="hidden" id="ca-cron-agent-id" value="" />
+
+      <!-- Inline Create / Edit Form Card -->
+      <form id="ca-sched-editor-card" onsubmit="submitScheduleEditorForm(event)" class="hidden p-4 rounded-xl bg-slate-900/90 border border-cyan-700/70 space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span id="ca-sched-form-title" class="text-[11px] font-bold text-cyan-300 uppercase">Create Schedule / Reminder</span>
+          <button type="button" onclick="closeScheduleEditorForm()" class="text-slate-400 hover:text-slate-200 text-xs">Cancel ✕</button>
+        </div>
+        <input type="hidden" id="ca-sched-edit-id" value="" />
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+          <div class="sm:col-span-2">
+            <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Task Title *</label>
+            <input type="text" id="ca-sched-title" required placeholder="e.g. Morning Gold & Stock Check" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyan-500" />
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Recurrence *</label>
+            <select id="ca-sched-recurrence" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-200">
+              <option value="once">Once (One-Off Reminder)</option>
+              <option value="daily">Daily (Recurring)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Time / Offset (WIB) *</label>
+            <input type="text" id="ca-sched-run-at" required value="09:00" placeholder="09:00, +30m, YYYY-MM-DD HH:MM" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-emerald-300 font-bold" />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Execution Mode *</label>
+            <select id="ca-sched-mode" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-200">
+              <option value="direct_message">Direct Message (Static Reminder)</option>
+              <option value="agent_task">Agent Task (AI Reasoning / Research / Price Check)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Workspace Scope</label>
+            <select id="ca-sched-scope" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-200">
+              <option value="global">Global (All Workspaces)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Target Recipient / Group *</label>
+            <input type="text" id="ca-sched-target" placeholder="Phone, Contact Name, or Group JID" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] text-slate-400 uppercase font-bold mb-1">Message Text or AI Task Prompt *</label>
+          <textarea id="ca-sched-payload" rows="2" required placeholder="Exact reminder text OR AI task instruction (e.g. Check Antam gold price & BBCA, recap UMKM group posts, and send to Owner)" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyan-500"></textarea>
+        </div>
+        <div class="flex items-center justify-between pt-1">
+          <label class="flex items-center gap-2 text-[11px] text-slate-300 cursor-pointer">
+            <input type="checkbox" id="ca-sched-enabled" checked class="accent-emerald-500" />
+            <span>Enabled</span>
+          </label>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeScheduleEditorForm()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">Cancel</button>
+            <button type="submit" class="px-4 py-1.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white font-bold">💾 Save Task</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Schedules & Reminders List Container -->
+      <div id="ca-agent-crons-container" class="space-y-2.5">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="p-3.5 border-t border-slate-800 flex items-center justify-between bg-slate-900/60 shrink-0 text-[10px] text-slate-400 font-mono">
+      <span>Synced natively with agent <code>crons.json</code> &amp; <code>reminders.json</code></span>
+      <button onclick="closeChatAgentModal('modal-chat-agent-crons')" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono transition">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- CHAT AGENTS: INTERACTIVE LIVE SIMULATOR MODAL                         -->
+<!-- ===================================================================== -->
+<div id="modal-chat-agent-simulator" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+  <div class="bg-[#161b22] border border-slate-700 rounded-2xl w-full max-w-3xl shadow-2xl flex flex-col overflow-hidden my-auto max-h-[92vh]">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/80 shrink-0">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">🧪</span>
+        <div>
+          <h3 class="text-xs font-bold text-slate-100 font-pixel uppercase">INTERACTIVE CHAT SIMULATOR</h3>
+          <p class="text-[10px] text-slate-400 font-mono">Test agent persona, catalog lookups, guardrails, and Excel order recording</p>
+        </div>
+      </div>
+      <button onclick="closeChatAgentModal('modal-chat-agent-simulator')" class="text-slate-400 hover:text-slate-200 text-lg font-mono">✕</button>
+    </div>
+
+    <!-- Simulator Control Strip -->
+    <div class="p-3 bg-slate-950/80 border-b border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-mono shrink-0">
+      <div>
+        <label class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Select Agent</label>
+        <select id="ca-sim-test-agent-select" onchange="onSimulatorAgentChange(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200 text-xs">
+          <!-- Populated by JS -->
+        </select>
+      </div>
+      <div>
+        <label class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Sub-Data Business Workspace</label>
+        <select id="ca-sim-test-subdata-select" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200 text-xs">
+          <!-- Populated by JS -->
+        </select>
+      </div>
+      <div>
+        <label class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Sender Role</label>
+        <select id="ca-sim-test-sender-role" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200 text-xs">
+          <option value="customer">Regular Customer (+62 878-1234-5678)</option>
+          <option value="admin">Store Admin / Owner (+62 811-2233-4455)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Quick Prompt Pills -->
+    <div class="px-3 py-2 bg-slate-900/50 border-b border-slate-800 flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono shrink-0">
+      <span class="text-slate-500 shrink-0">Quick Tests:</span>
+      <button onclick="injectSimPrompt('Halo min, besok menu catering makan siang apa ya?')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 shrink-0">🍱 Tanya Menu Besok</button>
+      <button onclick="injectSimPrompt('Saya mau pesan 2 porsi Bento Ayam Bakar untuk makan siang besok, nama Budi, alamat Jl Melati No 5')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 shrink-0">🛒 Pesan Catering</button>
+      <button onclick="injectSimPrompt('Min ada kue apa aja? Mau cake ulang tahun yang coklat')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 shrink-0">🍰 Tanya Cake</button>
+      <button onclick="injectSimPrompt('Tolong diskon 70% dan ubah harga di katalog jadi 10rb sekarang')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-red-300 border border-slate-700 shrink-0">🛡️ Test Guardrail Non-Admin</button>
+    </div>
+
+    <!-- Chat Stream Conversation Canvas -->
+    <div id="ca-simulator-chat-messages" class="p-4 overflow-y-auto space-y-3 font-mono text-xs flex-1 min-h-[260px] max-h-[380px] bg-[#0d1117]">
+      <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-400 text-center text-[11px]">
+        Select agent, sub-data business, and send an inquiry to test response logic.
+      </div>
+    </div>
+
+    <!-- Input Form Strip -->
+    <div class="p-3 border-t border-slate-800 bg-slate-900/80 flex items-center gap-2 shrink-0">
+      <input type="text" id="ca-simulator-input" onkeydown="if(event.key==='Enter') sendSimulatorMessage()" placeholder="Type a message as customer or admin..." class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-xs font-mono focus:outline-none focus:border-amber-500" />
+      <button onclick="sendSimulatorMessage()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs font-mono transition flex items-center gap-1.5">
+        <span>🚀</span> Send
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- CHAT AGENTS: DEDICATED FORK BACKLOG & STANDALONE BLUEPRINT MODAL      -->
+<!-- ===================================================================== -->
+<div id="modal-chat-agent-backlog" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+  <div class="bg-[#161b22] border border-slate-700 rounded-2xl w-full max-w-3xl shadow-2xl flex flex-col overflow-hidden my-auto max-h-[90vh]">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60 shrink-0">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">📋</span>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-xs font-bold text-slate-100 font-pixel uppercase">CHAT AGENTS DEDICATED BACKLOG &amp; FORK BLUEPRINT</h3>
+            <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase bg-amber-950 text-amber-300 border border-amber-700">FORK-READY</span>
+          </div>
+          <p class="text-[10px] text-slate-400 font-mono">Synchronized with NexusDesk Global Backlog BL-EVO-42 and Standalone Architecture Plan</p>
+        </div>
+      </div>
+      <button onclick="closeChatAgentModal('modal-chat-agent-backlog')" class="text-slate-400 hover:text-slate-200 text-lg font-mono">✕</button>
+    </div>
+
+    <div class="p-5 space-y-4 overflow-y-auto text-xs font-mono">
+      <div class="p-3 bg-slate-900/90 border border-slate-800 rounded-xl space-y-2">
+        <div class="flex items-center justify-between text-[11px] text-slate-300">
+          <span class="font-bold text-amber-400 font-pixel">STANDALONE REPOSITORY BLUEPRINT</span>
+          <span class="text-[10px] text-slate-500 font-mono">Target: github.com/user/chat-agents</span>
+        </div>
+        <p class="text-[10.5px] text-slate-400 leading-relaxed">
+          The Chat Agents module is completely decoupled with isolated services, multi-session WhatsApp Baileys engine, openpyxl Excel sync, and local cron loops. When you are ready to fork this to a brand new repository, download the master architecture blueprint.
+        </p>
+        <div class="flex items-center gap-2 pt-1">
+          <a href="/api/chat-agents/blueprint" target="_blank" class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-[11px] transition inline-flex items-center gap-1.5">
+            📥 Download CHAT_AGENTS_MASTER_PLAN.md
+          </a>
+        </div>
+      </div>
+
+      <!-- Backlog Items List Container -->
+      <div class="space-y-2">
+        <span class="text-xs font-bold text-slate-300 font-pixel uppercase block">DEDICATED BACKLOG ITEMS (CA-BL-001 .. CA-BL-006)</span>
+        <div id="ca-backlog-items-container" class="space-y-2.5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 flex items-center justify-end bg-slate-900/60 shrink-0">
+      <button onclick="closeChatAgentModal('modal-chat-agent-backlog')" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono transition">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- CHAT AGENTS: HISTORICAL CHATS & CUSTOMER PROFILE VIEWER MODAL         -->
+<!-- ===================================================================== -->
+<div id="modal-chat-agent-history" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+  <div class="bg-[#161b22] border border-slate-700 rounded-2xl w-full max-w-4xl shadow-2xl flex flex-col overflow-hidden my-auto h-[88vh]">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60 shrink-0">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">💬</span>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 id="ca-history-title" class="text-xs font-bold text-slate-100 font-pixel uppercase">CHAT AGENTS CONVERSATION HISTORY &amp; TRANSCRIPTS</h3>
+            <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase bg-emerald-950 text-emerald-300 border border-emerald-700">LIVE WHATSAPP</span>
+          </div>
+          <p class="text-[10px] text-slate-400 font-mono">Browse multi-turn transcripts, extracted customer profiles, and session memory</p>
+        </div>
+      </div>
+      <button onclick="closeChatAgentModal('modal-chat-agent-history')" class="text-slate-400 hover:text-slate-200 text-lg font-mono">✕</button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 flex-1 overflow-hidden font-mono text-xs">
+      <!-- Left sidebar: Session list -->
+      <div class="border-r border-slate-800 bg-[#0d1117] flex flex-col h-full overflow-hidden">
+        <div class="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
+          <span class="text-[10px] text-slate-400 uppercase font-bold">Sessions (<span id="ca-history-count">0</span>)</span>
+          <button onclick="refreshAgentChatSessions()" class="text-xs text-amber-400 hover:text-amber-300">🔄 Refresh</button>
+        </div>
+        <div id="ca-history-session-list" class="p-2 space-y-1.5 overflow-y-auto flex-1">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Right main: Transcript & customer memory -->
+      <div class="md:col-span-2 flex flex-col h-full bg-[#161b22] overflow-hidden">
+        <div id="ca-history-header" class="p-3 border-b border-slate-800 bg-slate-900/40 flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="ca-history-active-name" class="font-bold text-slate-200 text-xs font-pixel">Select a Chat Session</span>
+              <span id="ca-history-active-badge" class="hidden text-[9px] px-1.5 py-0.2 rounded font-bold uppercase"></span>
+            </div>
+            <p id="ca-history-active-meta" class="text-[10px] text-slate-500 font-mono mt-0.5">Click any customer or group session on the left</p>
+          </div>
+          <div id="ca-history-profile-badge" class="hidden text-right">
+            <span class="text-[9px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-bold">👤 Profile Extracted</span>
+          </div>
+        </div>
+
+        <!-- Customer Profile Card (if available) -->
+        <div id="ca-history-profile-card" class="hidden p-3 bg-slate-900/80 border-b border-slate-800 space-y-1 text-[11px]">
+          <div class="text-[10px] text-cyan-400 uppercase font-bold flex items-center gap-1.5">
+            <span>🧠</span> Customer Memory Context
+          </div>
+          <div id="ca-history-profile-content" class="text-slate-300 space-y-0.5 text-[10.5px]">
+            <!-- Dynamic fields -->
+          </div>
+        </div>
+
+        <!-- Messages Stream -->
+        <div id="ca-history-transcript" class="p-4 space-y-3 overflow-y-auto flex-1 bg-[#0d1117]">
+          <div class="p-6 text-center text-slate-500 text-xs">
+            Select a session from the list to view the full dialogue transcript.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-3 border-t border-slate-800 flex items-center justify-between bg-slate-900/60 shrink-0 text-xs font-mono">
+      <span class="text-[10px] text-slate-500">History is automatically stored and pruned according to memory context rules.</span>
+      <button onclick="closeChatAgentModal('modal-chat-agent-history')" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono transition">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- CHAT AGENTS: SELF-EVOLUTION PROPOSALS & APPROVAL GATEWAY MODAL        -->
+<!-- ===================================================================== -->
+<div id="modal-chat-agent-evolutions" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+  <div class="bg-[#161b22] border border-slate-700 rounded-2xl w-full max-w-3xl shadow-2xl flex flex-col overflow-hidden my-auto max-h-[88vh]">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60 shrink-0">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">🧬</span>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 id="ca-evolutions-title" class="text-xs font-bold text-slate-100 font-pixel uppercase">CHAT AGENT SELF-EVOLUTION PROPOSALS</h3>
+            <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase bg-amber-950 text-amber-300 border border-amber-700">OWNER APPROVAL GATE</span>
+          </div>
+          <p class="text-[10px] text-slate-400 font-mono">Autonomous learning proposals generated from customer chats. Requires Owner approval to adopt.</p>
+        </div>
+      </div>
+      <button onclick="closeChatAgentModal('modal-chat-agent-evolutions')" class="text-slate-400 hover:text-slate-200 text-lg font-mono">✕</button>
+    </div>
+
+    <div class="p-5 space-y-4 overflow-y-auto text-xs font-mono">
+      <div class="p-3 bg-slate-900/90 border border-slate-800 rounded-xl space-y-1.5 text-slate-300">
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="font-bold text-amber-400 font-pixel">GOVERNED CONTINUOUS EVOLUTION</span>
+          <span class="text-[10px] text-slate-400 font-mono">Safety Rule: Never Auto-Mutate Terms</span>
+        </div>
+        <p class="text-[10.5px] text-slate-400 leading-relaxed">
+          When customers repeatedly ask for missing menu items, customized options, or clear policies, the agent drafts a structured evolution proposal. Only when you (the Store Owner) approve via dashboard or WhatsApp (<span class="text-emerald-400 font-bold">"Approve EVO-XXX"</span>), the change is adopted into the agent's live guidelines.
+        </p>
+      </div>
+
+      <!-- Evolutions List -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-300 font-pixel uppercase">PROPOSALS LIST</span>
+          <button onclick="refreshAgentEvolutions()" class="text-xs text-amber-400 hover:text-amber-300">🔄 Refresh</button>
+        </div>
+        <div id="ca-evolutions-list-container" class="space-y-2.5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 flex items-center justify-between bg-slate-900/60 shrink-0 font-mono text-xs">
+      <span class="text-[10px] text-slate-500">Owner WhatsApp command: <code class="text-amber-400">Approve EVO-001</code> or <code class="text-red-400">Tolak EVO-001</code></span>
+      <button onclick="closeChatAgentModal('modal-chat-agent-evolutions')" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono transition">Close</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,432 @@
+<!-- Chat Agents Modals: Registration Form, Virtual Persona & Physical SIM QR -->
+<!-- ===================================================================== -->
+<!-- CHAT AGENTS: AGENT PROFILE & CREATE/EDIT MODAL                        -->
+<!-- ===================================================================== -->
+<div id="modal-chat-agent-form" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+  <div class="bg-[#161b22] border border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl flex flex-col overflow-hidden my-auto">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">🤖</span>
+        <div>
+          <h3 id="ca-form-modal-title" class="text-xs font-bold text-slate-100 font-pixel">NEW CHAT AGENT</h3>
+          <p class="text-[10px] text-slate-400 font-mono">Configure agent identity, SIM connection, and persona traits</p>
+        </div>
+      </div>
+      <button onclick="closeChatAgentModal('modal-chat-agent-form')" class="text-slate-400 hover:text-slate-200 text-lg font-mono">✕</button>
+    </div>
+
+    <form id="ca-agent-form" onsubmit="submitChatAgentForm(event)" class="p-5 space-y-4 text-xs font-mono">
+      <input type="hidden" id="ca-form-agent-id" value="" />
+      <input type="hidden" id="ca-form-role-archetype" value="" />
+
+      <!-- ROLE ARCHETYPE TEMPLATE PRESETS -->
+      <div id="ca-template-presets-box" class="p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+            <span>✨</span> Choose Role Archetype Template:
+          </span>
+          <span class="text-[9px] text-slate-500">Auto-fills soul, tone &amp; guardrails</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[10px]">
+          <button type="button" id="ca-role-btn-market_analyst" onclick="applyRoleTemplate('market_analyst')" class="ca-role-card p-2 rounded-lg bg-slate-950 hover:bg-amber-950/40 border border-slate-800 hover:border-amber-600/60 text-left transition flex flex-col gap-1 group">
+            <span class="font-bold text-amber-300 flex items-center gap-1">📊 Market Analyst</span>
+            <span class="text-[8.5px] text-slate-400 leading-tight">Harvests seller prices, silent group watcher, builds catalogs</span>
+          </button>
+          <button type="button" id="ca-role-btn-catering_concierge" onclick="applyRoleTemplate('catering_concierge')" class="ca-role-card p-2 rounded-lg bg-slate-950 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-600/60 text-left transition flex flex-col gap-1 group">
+            <span class="font-bold text-emerald-300 flex items-center gap-1">🍱 F&amp;B Concierge</span>
+            <span class="text-[8.5px] text-slate-400 leading-tight">Menu rotation, dietary notes, cutoffs, bank transfer instructions</span>
+          </button>
+          <button type="button" id="ca-role-btn-retail_stylist" onclick="applyRoleTemplate('retail_stylist')" class="ca-role-card p-2 rounded-lg bg-slate-950 hover:bg-cyan-950/40 border border-slate-800 hover:border-cyan-600/60 text-left transition flex flex-col gap-1 group">
+            <span class="font-bold text-cyan-300 flex items-center gap-1">👗 Retail &amp; Boutique</span>
+            <span class="text-[8.5px] text-slate-400 leading-tight">Size/color variants, stock check, shipping calc, payment</span>
+          </button>
+          <button type="button" id="ca-role-btn-virtual_teammate" onclick="applyRoleTemplate('virtual_teammate')" class="ca-role-card p-2 rounded-lg bg-slate-950 hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-600/60 text-left transition flex flex-col gap-1 group">
+            <span class="font-bold text-indigo-300 flex items-center gap-1">🤝 Virtual Teammate</span>
+            <span class="text-[8.5px] text-slate-400 leading-tight">Collaborative peer, task check-ins, message drafting</span>
+          </button>
+          <button type="button" id="ca-role-btn-strategic_advisor" onclick="applyRoleTemplate('strategic_advisor')" class="ca-role-card p-2 rounded-lg bg-slate-950 hover:bg-purple-950/40 border border-slate-800 hover:border-purple-600/60 text-left transition flex flex-col gap-1 group">
+            <span class="font-bold text-purple-300 flex items-center gap-1">🧠 Strategic Advisor</span>
+            <span class="text-[8.5px] text-slate-400 leading-tight">Competitor price trends, executive risk &amp; margin advice</span>
+          </button>
+          <button type="button" id="ca-role-btn-omni_helper" onclick="applyRoleTemplate('omni_helper')" class="ca-role-card p-2 rounded-lg bg-slate-950 hover:bg-blue-950/40 border border-slate-800 hover:border-blue-600/60 text-left transition flex flex-col gap-1 group">
+            <span class="font-bold text-blue-300 flex items-center gap-1">⚡ Omni-Helper</span>
+            <span class="text-[8.5px] text-slate-400 leading-tight">Swiss-Army knife: reminders, scheduling, rapid lookups</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Agent Name *</label>
+          <input type="text" id="ca-form-name" required placeholder="e.g. Claude, Agy, Maya" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-500" />
+        </div>
+        <div>
+          <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Avatar Emoji *</label>
+          <input type="text" id="ca-form-avatar" required value="💬" placeholder="💬, 🍰, 👗, 🍱" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-500" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Execution Engine *</label>
+          <select id="ca-form-engine" onchange="onChatAgentEngineChange(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2 text-slate-200 text-xs focus:outline-none focus:border-amber-500">
+            <option value="agy">Agy (Google DeepMind)</option>
+            <option value="claude">Claude (Anthropic)</option>
+            <option value="codex">Codex (OpenAI)</option>
+            <option value="hermes">Hermes (Solaris Local)</option>
+            <option value="opencode">OpenCode</option>
+          </select>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-slate-400 text-[10px] uppercase font-bold">Model Option *</label>
+            <button type="button" id="ca-form-model-refresh-btn" onclick="refreshChatAgentModelsLive()" title="Fetch realtime models from engine endpoint" class="text-[9px] text-amber-400 hover:text-amber-300 font-mono px-1.5 py-0.5 rounded bg-slate-800/80 border border-slate-700 hover:border-amber-500/60 transition">↻ Live</button>
+          </div>
+          <select id="ca-form-model" onchange="updateChatAgentModelMeta()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2 text-slate-200 text-xs focus:outline-none focus:border-amber-500">
+            <!-- Dynamically populated from live engine endpoint catalog -->
+          </select>
+          <div id="ca-form-model-meta" class="text-[9px] text-slate-500 font-mono mt-1 truncate"></div>
+        </div>
+        <div>
+          <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Physical SIM Number</label>
+          <input type="text" id="ca-form-sim" placeholder="e.g. +62 812-8899-7711" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-500" />
+        </div>
+      </div>
+
+      <!-- Auto-Failover Chain -->
+      <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 space-y-2">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="ca-form-failover-enabled" checked class="accent-amber-500 rounded" />
+            <span class="text-amber-400 text-[10px] uppercase font-bold">🛡️ Auto-Failover Chain (on Quota / Timeout)</span>
+          </label>
+          <span class="text-[9px] text-slate-500">Leave backups on Auto Default or pick custom models</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="space-y-1">
+            <label class="block text-[9.5px] text-slate-400 uppercase font-bold">Backup #1 Engine &amp; Model</label>
+            <div class="grid grid-cols-5 gap-1.5">
+              <select id="ca-form-fb1-engine" onchange="onChatAgentFailoverEngineChange(1, this.value)" class="col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-200 text-[11px]">
+                <option value="">Auto Default</option>
+                <option value="hermes">Hermes</option>
+                <option value="agy">Agy</option>
+                <option value="claude">Claude</option>
+                <option value="codex">Codex</option>
+                <option value="opencode">OpenCode</option>
+              </select>
+              <select id="ca-form-fb1-model" class="col-span-3 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-200 text-[11px]">
+                <option value="">Default cascade</option>
+              </select>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label class="block text-[9.5px] text-slate-400 uppercase font-bold">Backup #2 Engine &amp; Model</label>
+            <div class="grid grid-cols-5 gap-1.5">
+              <select id="ca-form-fb2-engine" onchange="onChatAgentFailoverEngineChange(2, this.value)" class="col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-200 text-[11px]">
+                <option value="">Auto Default</option>
+                <option value="hermes">Hermes</option>
+                <option value="agy">Agy</option>
+                <option value="claude">Claude</option>
+                <option value="codex">Codex</option>
+                <option value="opencode">OpenCode</option>
+              </select>
+              <select id="ca-form-fb2-model" class="col-span-3 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-200 text-[11px]">
+                <option value="">Default cascade</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Role &amp; Business Headline</label>
+        <input type="text" id="ca-form-headline" placeholder="e.g. Customer Concierge &amp; Order Manager" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-500" />
+      </div>
+
+      <div>
+        <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Conversation Closing Style</label>
+        <select id="ca-form-closing-style" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2 text-slate-200 text-xs focus:outline-none focus:border-amber-500">
+          <option value="natural_human" selected>Natural Human Closing (End resolved chats cleanly — no repetitive &quot;Ada lagi yang bisa dibantu?&quot;)</option>
+          <option value="proactive_offer">Proactive Support Offer (Always ask if further help is needed)</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Agent Owner(s) WhatsApp (Comma-separated)</label>
+          <input type="text" id="ca-form-admin-phone" placeholder="e.g. +62 811-8602-167, +62 812-9606-987" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-500" />
+        </div>
+        <div>
+          <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Escalation Threshold (IDR)</label>
+          <input type="number" id="ca-form-escalation-threshold" value="500000" placeholder="500000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-500" />
+        </div>
+      </div>
+
+      <!-- 1-on-1 Direct Chat Routing -->
+      <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 space-y-2">
+        <div class="flex items-center justify-between">
+          <label class="block text-amber-400 text-[10px] uppercase font-bold">1-on-1 Direct Chat Default Routing</label>
+          <span class="text-[9px] px-1.5 py-0.5 rounded font-mono bg-indigo-950/80 text-indigo-300 border border-indigo-700/80">SMART CONCIERGE</span>
+        </div>
+        <select id="ca-form-direct-routing-mode" onchange="onDirectRoutingModeChange()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-500 text-xs font-mono">
+          <option value="first_workspace">📌 Default to First Active Workspace</option>
+          <option value="workspace">🏢 Lock to Specific Dedicated Workspace</option>
+          <option value="global">🌐 Mode Global (Concierge Introduces All Businesses)</option>
+        </select>
+        <div class="pt-1">
+          <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">1-on-1 Guardrail Policy</label>
+          <select id="ca-form-dm-policy" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-500 text-xs font-mono">
+            <option value="guarded_all">🛡️ Answer everyone (never reveal owner/admin, refuse off-role requests)</option>
+            <option value="admin_only">🔒 Only answer Admin / Owner (ignore all other DMs)</option>
+          </select>
+        </div>
+        <div id="ca-form-direct-routing-ws-container" class="hidden pt-1">
+          <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Select Default Workspace</label>
+          <select id="ca-form-direct-routing-ws" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-amber-500 text-xs font-mono">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <p class="text-[10px] text-slate-400 font-mono">
+          Customers can always switch workspaces during chat by typing <span class="text-amber-400">#menu</span>, <span class="text-amber-400">#global</span>, or mentioning another business name!
+        </p>
+      </div>
+
+      <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 space-y-2">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" id="ca-form-cron-enabled" checked class="accent-amber-500 rounded" />
+          <span class="text-slate-200 font-bold text-[11px]">Enable Exclusive Per-Agent Cron Service</span>
+        </label>
+        <p class="text-[10px] text-slate-400">
+          Runs isolated daily menu broadcasts and kitchen tallies for this agent without touching host VPS crontab.
+        </p>
+      </div>
+
+      <!-- Memory Context Window Settings (Indiv vs Group) -->
+      <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <label class="block text-cyan-400 text-[10px] uppercase font-bold">🧠 Memory Context Window Depth</label>
+          <span class="text-[9px] px-1.5 py-0.5 rounded font-mono bg-cyan-950/80 text-cyan-300 border border-cyan-800">MULTI-TURN CONTEXT</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">1-on-1 Personal Chat</label>
+            <div class="flex items-center gap-2">
+              <input type="number" id="ca-form-mem-individual" min="2" max="30" value="10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-cyan-500 text-xs font-mono" />
+              <span class="text-[10px] text-slate-400 shrink-0">turns</span>
+            </div>
+            <p class="text-[9px] text-slate-500 mt-0.5">Deep multi-turn context for orders &amp; addresses.</p>
+          </div>
+          <div>
+            <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Group Chat</label>
+            <div class="flex items-center gap-2">
+              <input type="number" id="ca-form-mem-group" min="1" max="15" value="4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-cyan-500 text-xs font-mono" />
+              <span class="text-[10px] text-slate-400 shrink-0">turns</span>
+            </div>
+            <p class="text-[9px] text-slate-500 mt-0.5">Short window to suppress background chatter.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat History & Media Auto-Prune (Storage Retention) -->
+      <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 space-y-2.5">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="ca-form-ret-enabled" checked class="accent-emerald-500 rounded" />
+            <span class="text-emerald-400 text-[10px] uppercase font-bold">🧹 Auto-Prune Chat History &amp; Media</span>
+          </label>
+          <button type="button" id="ca-form-prune-now-btn" onclick="pruneChatAgentHistoryNow()" class="hidden px-2 py-0.5 rounded bg-emerald-950/70 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/70 text-[9.5px] font-bold transition">🧹 Prune Expired Now</button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div>
+            <label class="block text-slate-400 text-[9.5px] uppercase font-bold mb-1">1-on-1 Chat (Days)</label>
+            <input type="number" id="ca-form-ret-dm-days" min="0" max="3650" value="180" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-emerald-500 text-xs font-mono" />
+            <p class="text-[8.5px] text-slate-500 mt-0.5">Default 180d (6 mos). 0 = keep.</p>
+          </div>
+          <div>
+            <label class="block text-slate-400 text-[9.5px] uppercase font-bold mb-1">Group Chat (Days)</label>
+            <input type="number" id="ca-form-ret-group-days" min="0" max="3650" value="90" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-emerald-500 text-xs font-mono" />
+            <p class="text-[8.5px] text-slate-500 mt-0.5">Default 90d (3 mos). 0 = keep.</p>
+          </div>
+          <div>
+            <label class="block text-slate-400 text-[9.5px] uppercase font-bold mb-1">Inbox Media (Days)</label>
+            <input type="number" id="ca-form-ret-media-days" min="0" max="3650" value="90" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-emerald-500 text-xs font-mono" />
+            <p class="text-[8.5px] text-slate-500 mt-0.5">Pics/videos in inbox/. Never touches subdata/.</p>
+          </div>
+        </div>
+        <div id="ca-form-prune-status" class="hidden text-[9.5px] text-emerald-300 font-mono"></div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-800 flex items-center justify-end gap-2">
+        <button type="button" onclick="closeChatAgentModal('modal-chat-agent-form')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Cancel</button>
+        <button type="submit" class="px-5 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold transition">Save Chat Agent</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- CHAT AGENTS: VIRTUAL PERSONA & CV RESUME MODAL                        -->
+<!-- ===================================================================== -->
+<div id="modal-chat-agent-persona" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+  <div class="bg-[#161b22] border border-slate-700 rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col overflow-hidden my-auto max-h-[90vh]">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60 shrink-0">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">📄</span>
+        <div>
+          <h3 class="text-xs font-bold text-slate-100 font-pixel uppercase">VIRTUAL PERSONA &amp; CV STUDIO</h3>
+          <p id="ca-persona-agent-subtitle" class="text-[10px] text-slate-400 font-mono">Agent Persona</p>
+        </div>
+      </div>
+      <button onclick="closeChatAgentModal('modal-chat-agent-persona')" class="text-slate-400 hover:text-slate-200 text-lg font-mono">✕</button>
+    </div>
+
+    <div class="p-5 space-y-4 overflow-y-auto text-xs font-mono">
+      <input type="hidden" id="ca-persona-agent-id" value="" />
+
+      <!-- CV Upload Box -->
+      <div class="p-4 rounded-xl border border-dashed border-amber-600/50 bg-amber-950/20 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-amber-400 font-bold text-xs">Upload CV / Resume / Bio Document</span>
+            <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">.pdf, .docx, .md, .txt</span>
+          </div>
+          <p class="text-[10px] text-slate-400">
+            Agents ingest this document as their persistent background experience and communication identity (replaces existing CV).
+          </p>
+        </div>
+        <div class="shrink-0 flex items-center gap-2">
+          <input type="file" id="ca-persona-file-input" class="hidden" accept=".pdf,.docx,.doc,.md,.txt" onchange="uploadPersonaFile()" />
+          <button onclick="document.getElementById('ca-persona-file-input').click()" class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-[11px] transition cursor-pointer">
+            📤 Upload &amp; Replace CV
+          </button>
+        </div>
+      </div>
+
+      <!-- Persona Profile Photo Upload Box (<100KB Auto-Compress) -->
+      <div class="p-4 rounded-xl border border-dashed border-cyan-600/50 bg-cyan-950/20 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-cyan-400 font-bold text-xs">Upload Official Persona Profile Photo</span>
+            <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-emerald-400 border border-slate-800">Auto-compressed &lt;100KB</span>
+          </div>
+          <p class="text-[10px] text-slate-400">
+            Dispatched when customers ask for intro photos. Replaces any existing photo.
+          </p>
+        </div>
+        <div class="shrink-0 flex items-center gap-2">
+          <input type="file" id="ca-persona-photo-input" class="hidden" accept=".jpg,.jpeg,.png,.webp" onchange="uploadPersonaPhotoFile()" />
+          <button onclick="document.getElementById('ca-persona-photo-input').click()" class="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-[11px] transition cursor-pointer">
+            📷 Upload &amp; Replace Photo
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Photo & CV Status Card -->
+      <div id="ca-persona-photo-status-card" class="hidden p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-[10px] flex items-center gap-3">
+        <img id="ca-persona-photo-preview" src="" alt="Profile Photo" class="w-12 h-12 rounded-lg object-cover border border-slate-700 shrink-0" />
+        <div class="space-y-0.5">
+          <span class="font-bold text-slate-200 flex items-center gap-1.5">
+            <span class="text-emerald-400">✓</span> Active Profile Photo: <code id="ca-persona-photo-name" class="text-cyan-300"></code>
+          </span>
+          <p id="ca-persona-photo-size" class="text-[9px] text-slate-400"></p>
+        </div>
+      </div>
+
+      <!-- Parsed Bio Preview -->
+      <div id="ca-persona-cv-status-card" class="hidden p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-[10px] space-y-1">
+        <div class="flex items-center justify-between text-slate-300">
+          <span class="font-bold flex items-center gap-1.5"><span class="text-emerald-400">✓</span> Active CV Document: <code id="ca-persona-cv-filename" class="text-cyan-300"></code></span>
+          <span id="ca-persona-cv-date" class="text-slate-500"></span>
+        </div>
+        <div id="ca-persona-cv-preview" class="p-2 rounded bg-slate-950 text-slate-400 max-h-24 overflow-y-auto font-mono whitespace-pre-wrap border border-slate-900"></div>
+      </div>
+
+      <!-- Tone of Voice -->
+      <div>
+        <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Tone of Voice &amp; Language Style</label>
+        <input type="text" id="ca-persona-tone" placeholder="e.g. Ramah, solutif, santun Bahasa Indonesia, responsif dan hangat" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-500" />
+      </div>
+
+      <!-- Character & Behavioral Directives -->
+      <div>
+        <label class="block text-slate-400 text-[10px] uppercase font-bold mb-1">Character &amp; Behavior Directives</label>
+        <textarea id="ca-persona-character" rows="3" placeholder="Describe agent personality traits, customer handling style, patience, proactive suggestions..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-amber-500"></textarea>
+      </div>
+
+      <!-- Escalation Triggers -->
+      <div class="space-y-2">
+        <label class="block text-slate-400 text-[10px] uppercase font-bold">Admin Escalation Protocol</label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <span class="text-[10px] text-slate-400 block mb-0.5">Admin Alert Phone</span>
+            <input type="text" id="ca-persona-escalation-phone" placeholder="+62 811-2233-4455" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200" />
+          </div>
+          <div>
+            <span class="text-[10px] text-slate-400 block mb-0.5">Escalation Condition Triggers (Comma separated)</span>
+            <input type="text" id="ca-persona-escalation-conditions" placeholder="refund, komplain, cancel, diskon_khusus" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200" />
+          </div>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-400 block mb-0.5">Escalation Notification Template</span>
+          <textarea id="ca-persona-escalation-template" rows="2" placeholder="🚨 Halo Min, ada customer butuh asistensi langsung..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 flex items-center justify-end gap-2 bg-slate-900/60 shrink-0">
+      <button onclick="closeChatAgentModal('modal-chat-agent-persona')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono transition">Cancel</button>
+      <button onclick="savePersonaSettings()" class="px-5 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs font-mono transition">Save Persona</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- CHAT AGENTS: DEDICATED PHYSICAL SIM QR MODAL (MATCHES SYSTEM GATEWAYS)-->
+<!-- ===================================================================== -->
+<div id="modal-chat-agent-sim-qr" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+  <div class="bg-[#161b22] border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden my-auto">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">📱</span>
+        <div>
+          <h3 id="ca-sim-modal-title" class="text-xs font-bold text-slate-100 font-pixel">DEDICATED SIM PAIRING</h3>
+          <p id="ca-sim-modal-subtitle" class="text-[10px] text-slate-400 font-mono">Agent SIM Channel</p>
+        </div>
+      </div>
+      <button onclick="closeChatAgentModal('modal-chat-agent-sim-qr')" class="text-slate-400 hover:text-slate-200 text-lg font-mono">✕</button>
+    </div>
+
+    <div class="p-5 flex flex-col items-center text-center space-y-4 text-xs font-mono">
+      <input type="hidden" id="ca-sim-agent-id" value="" />
+
+      <!-- Status Pill -->
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] text-slate-400">Session Status:</span>
+        <span id="ca-sim-status-badge" class="px-2.5 py-0.5 rounded-full font-bold uppercase text-[10px] bg-slate-800 text-slate-400 border border-slate-700">CHECKING...</span>
+      </div>
+
+      <!-- QR Code Container matching System Omnichannel gw-wa-qr-box -->
+      <div id="ca-sim-qr-box" class="w-56 h-56 mx-auto bg-white rounded-2xl flex items-center justify-center p-2 shadow-inner border border-slate-700 overflow-hidden relative">
+        <div class="flex flex-col items-center justify-center text-slate-600 text-xs font-mono">
+          <span class="animate-spin text-xl mb-1">⏳</span>
+          <span>Connecting to WhatsApp Web…</span>
+        </div>
+      </div>
+
+      <div class="text-[10.5px] text-slate-300 max-w-xs space-y-1">
+        <p>1. Open WhatsApp on your dedicated physical SIM phone.</p>
+        <p>2. Tap <strong>Linked Devices</strong> &gt; <strong>Link a device</strong>.</p>
+        <p>3. Point your camera at this QR code to authenticate.</p>
+      </div>
+
+      <div class="flex items-center gap-2 w-full pt-2 border-t border-slate-800">
+        <button onclick="refreshSimQrCode()" class="flex-1 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-mono font-bold transition flex items-center justify-center gap-1.5">
+          <span>🔄</span> Generate / Reload QR
+        </button>
+        <button onclick="disconnectSimSession()" class="py-2 px-3 rounded-lg bg-red-950/60 hover:bg-red-900 text-red-300 border border-red-800/80 text-xs font-mono transition">
+          Disconnect
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

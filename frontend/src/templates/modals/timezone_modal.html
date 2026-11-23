@@ -1,0 +1,75 @@
+<!-- Timezone Setting Modal -->
+  <div id="timezone-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-2.5 sm:p-4 md:p-6 overflow-hidden">
+    <div class="bg-[#161b22] border border-slate-800 rounded-2xl max-w-md w-full shadow-2xl flex flex-col max-h-[calc(100vh-1.5rem)] sm:max-h-[88vh] overflow-hidden">
+      <!-- Pinned Header -->
+      <div class="flex justify-between items-center px-4 py-3 sm:px-5 border-b border-slate-800 bg-[#161b22] shrink-0">
+        <div>
+          <h3 class="font-bold text-xs sm:text-sm text-slate-100 font-pixel">SELECT YOUR LOCAL TIMEZONE</h3>
+          <span class="text-[9px] sm:text-[10px] text-slate-400 font-mono">Synchronizes UI clocks, crons &amp; next run timers</span>
+        </div>
+        <button onclick="closeTimezoneModal()" class="text-slate-400 hover:text-white text-lg leading-none p-1 cursor-pointer">&times;</button>
+      </div>
+
+      <!-- Scrollable Body -->
+      <div class="space-y-3.5 text-xs p-4 sm:p-5 overflow-y-auto flex-1 custom-scrollbar">
+        <div>
+          <label class="text-slate-300 font-semibold block mb-1.5">Your Local Timezone</label>
+          <select id="select-user-timezone" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-emerald-400 font-mono text-xs focus:outline-none focus:border-emerald-600">
+            <option value="-12|GMT-12 (Baker Island)">UTC-12:00 — Baker Island</option>
+            <option value="-11|GMT-11 (Samoa, Niue)">UTC-11:00 — Samoa / Niue</option>
+            <option value="-10|GMT-10 (HST - Hawaii)">UTC-10:00 — Hawaii (HST)</option>
+            <option value="-9|GMT-9 (AKST - Alaska)">UTC-09:00 — Alaska (AKST)</option>
+            <option value="-8|GMT-8 (PST - US Pacific)">UTC-08:00 — US Pacific (PST)</option>
+            <option value="-7|GMT-7 (MST - US Mountain)">UTC-07:00 — US Mountain (MST)</option>
+            <option value="-6|GMT-6 (CST - US Central)">UTC-06:00 — US Central (CST)</option>
+            <option value="-5|GMT-5 (EST - US Eastern)">UTC-05:00 — US Eastern (EST)</option>
+            <option value="-4|GMT-4 (Atlantic / Santiago)">UTC-04:00 — Atlantic / Santiago</option>
+            <option value="-3|GMT-3 (Brazil / Buenos Aires)">UTC-03:00 — Brazil / Buenos Aires</option>
+            <option value="-2|GMT-2 (Mid-Atlantic)">UTC-02:00 — Mid-Atlantic</option>
+            <option value="-1|GMT-1 (Azores / Cape Verde)">UTC-01:00 — Azores / Cape Verde</option>
+            <option value="0|GMT+0 (UTC / London)">UTC+00:00 — UTC / London (GMT)</option>
+            <option value="1|GMT+1 (CET - Central Europe)">UTC+01:00 — Central Europe (CET)</option>
+            <option value="2|GMT+2 (CEST - Berlin / Server)">UTC+02:00 — Central European Summer (CEST - Server)</option>
+            <option value="3|GMT+3 (MSK / Riyadh)">UTC+03:00 — Moscow / Riyadh (MSK/AST)</option>
+            <option value="3.5|GMT+3.5 (Tehran)">UTC+03:30 — Tehran (IRST)</option>
+            <option value="4|GMT+4 (GST - Dubai)">UTC+04:00 — Dubai / Gulf (GST)</option>
+            <option value="4.5|GMT+4.5 (Kabul)">UTC+04:30 — Kabul (AFT)</option>
+            <option value="5|GMT+5 (PKT - Pakistan)">UTC+05:00 — Pakistan (PKT)</option>
+            <option value="5.5|GMT+5.5 (IST - India)">UTC+05:30 — India / Sri Lanka (IST)</option>
+            <option value="5.75|GMT+5.75 (NPT - Nepal)">UTC+05:45 — Nepal (NPT)</option>
+            <option value="6|GMT+6 (BST - Bangladesh)">UTC+06:00 — Bangladesh / Almaty (BST)</option>
+            <option value="6.5|GMT+6.5 (MMT - Myanmar)">UTC+06:30 — Myanmar (MMT)</option>
+            <option value="7|GMT+7 (ICT/WIB - Jakarta, Bangkok)" selected>UTC+07:00 — Southeast Asia / Jakarta / Bangkok (ICT/WIB - Default)</option>
+            <option value="8|GMT+8 (SGT/CST - Singapore, Bali, Beijing)">UTC+08:00 — Singapore / Bali / Beijing (SGT/WITA)</option>
+            <option value="9|GMT+9 (JST/KST - Tokyo, Seoul)">UTC+09:00 — Japan / Korea (JST/KST)</option>
+            <option value="9.5|GMT+9.5 (ACST - Adelaide)">UTC+09:30 — Adelaide / Darwin (ACST)</option>
+            <option value="10|GMT+10 (AEST - Sydney)">UTC+10:00 — Sydney / Melbourne (AEST)</option>
+            <option value="11|GMT+11 (Solomon Islands)">UTC+11:00 — Solomon Islands</option>
+            <option value="12|GMT+12 (NZST - New Zealand)">UTC+12:00 — New Zealand / Fiji (NZST)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-slate-400 block mb-1 text-[11px]">Quick Region Presets:</label>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="setQuickTz(7, 'GMT+7 (WIB)')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800 text-[10px] font-mono font-semibold cursor-pointer">📍 Jakarta/Bangkok (GMT+7)</button>
+            <button type="button" onclick="setQuickTz(8, 'GMT+8 (SGT)')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-slate-800 text-[10px] font-mono font-semibold cursor-pointer">Singapore (GMT+8)</button>
+            <button type="button" onclick="setQuickTz(2, 'GMT+2 (CEST)')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[10px] font-mono font-semibold cursor-pointer">Berlin / Server (GMT+2)</button>
+            <button type="button" onclick="setQuickTz(0, 'GMT+0 (UTC)')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[10px] font-mono font-semibold cursor-pointer">London (UTC)</button>
+            <button type="button" onclick="setQuickTz(-5, 'GMT-5 (EST)')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[10px] font-mono font-semibold cursor-pointer">New York (EST)</button>
+            <button type="button" onclick="setQuickTz(-8, 'GMT-8 (PST)')" class="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[10px] font-mono font-semibold cursor-pointer">California (PST)</button>
+          </div>
+        </div>
+
+        <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80 text-[11px] font-mono text-slate-400 leading-relaxed">
+          <span>Server time is locked to hardware <strong class="text-cyan-400">Europe/Berlin (CEST)</strong>. NexusDesk will automatically map all schedule execution displays and cron calculations to your preferred local timezone.</span>
+        </div>
+      </div>
+
+      <!-- Pinned Footer -->
+      <div class="px-4 py-2.5 sm:px-5 sm:py-3 border-t border-slate-800 bg-[#161b22] flex justify-end gap-2 shrink-0 z-10">
+        <button onclick="closeTimezoneModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">Cancel</button>
+        <button onclick="saveSelectedTimezone()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition shadow-md cursor-pointer">Apply Timezone</button>
+      </div>
+    </div>
+  </div>

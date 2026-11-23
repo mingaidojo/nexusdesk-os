@@ -1,0 +1,49 @@
+<div id="tab-tools-matrix" class="hidden flex flex-col gap-5">
+      <!-- Clean Top Sub-Nav (Dedicated View Switcher) -->
+      <div class="bg-[#161b22]/95 border border-slate-800/90 p-2.5 rounded-xl flex flex-wrap items-center gap-2 shadow-lg">
+        <button type="button" onclick="switchMainTab('tools-matrix')" class="px-3 py-1.5 rounded-lg bg-cyan-900/60 border border-cyan-500/80 text-xs font-mono text-cyan-200 font-bold transition flex items-center gap-1.5 shadow-sm">
+          <span>⚡</span> <span>Privilege Matrix</span>
+        </button>
+        <button type="button" onclick="switchMainTab('tools-configured')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-emerald-300 transition flex items-center gap-1.5">
+          <span>🖥️</span> <span>Configured Daemons</span>
+        </button>
+        <button type="button" onclick="switchMainTab('tools-catalog')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-amber-300 transition flex items-center gap-1.5">
+          <span>📦</span> <span>Verified Catalog (18)</span>
+        </button>
+        <button type="button" onclick="openMcpConfigModal('')" class="px-3 py-1.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-xs font-mono text-white transition flex items-center gap-1.5 ml-auto">
+          <span>➕</span> <span>Add Custom Server</span>
+        </button>
+      </div>
+
+      <!-- Agent Capability Privilege Matrix Container -->
+      <div id="tools-section-matrix" class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+              <span>🔌</span> <span>AGENT CAPABILITY PRIVILEGE MATRIX</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5 font-mono">Fine-grained execution privileges and tool access controls per agent station.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="tools-save-toast" class="text-[10px] text-emerald-400 font-mono hidden bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">Saved to config!</span>
+            <span class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[10px] text-cyan-400 font-mono font-semibold uppercase" id="tools-active-agent-badge">
+              AGENT: SOLARIS
+            </span>
+          </div>
+        </div>
+
+        <!-- Agent Tabs Selector for Tool Matrix -->
+        <div id="tools-agent-tabs" class="flex flex-wrap gap-1.5 pb-3 border-b border-slate-800 mb-4">
+          <!-- Populated dynamically: Solaris, Scribe, Pylon, etc. -->
+        </div>
+
+        <!-- Dynamic Tool Cards for Selected Agent with Live Toggles -->
+        <div id="tools-matrix-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="text-slate-500 font-mono text-xs col-span-full py-4 text-center">Loading capability matrix...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- DEDICATED PAGE 2: 🖥️ TOOLS & MCP: CONFIGURED DAEMONS -->
+    <!-- ============================================================== -->

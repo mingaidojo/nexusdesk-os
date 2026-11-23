@@ -1,0 +1,69 @@
+<div id="tab-models-reasoning" class="hidden flex flex-col gap-5">
+      <!-- Clean Top Sub-Nav (Dedicated View Switcher) -->
+      <div class="bg-[#161b22]/95 border border-slate-800/90 p-2.5 rounded-xl flex flex-wrap items-center gap-2 shadow-lg">
+        <button type="button" onclick="switchMainTab('models-agents')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-cyan-300 transition flex items-center gap-1.5">
+          <span>🤖</span> <span>Agent Roles</span>
+        </button>
+        <button type="button" onclick="switchMainTab('models-failover')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-emerald-300 transition flex items-center gap-1.5">
+          <span>🌐</span> <span>Global Failover</span>
+        </button>
+        <button type="button" onclick="switchMainTab('models-reasoning')" class="px-3 py-1.5 rounded-lg bg-amber-900/60 border border-amber-500/80 text-xs font-mono text-amber-200 font-bold transition flex items-center gap-1.5 shadow-sm">
+          <span>⚡</span> <span>Reasoning Budgets</span>
+        </button>
+        <button type="button" onclick="switchMainTab('models-memory')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-purple-300 transition flex items-center gap-1.5">
+          <span>🧠</span> <span>Context Meters</span>
+        </button>
+        <button type="button" onclick="switchMainTab('models-library')" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-blue-300 transition flex items-center gap-1.5">
+          <span>📚</span> <span>Model Library</span>
+        </button>
+      </div>
+
+      <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+              <span>⚡</span> <span>THINKING & REASONING EFFORT BUDGETS</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5 font-mono">Control deep reasoning tokens and thinking effort overrides per model and globally.</p>
+          </div>
+          <div class="bg-slate-950 px-3.5 py-2 rounded-xl border border-slate-800 flex items-center gap-2 shadow-inner">
+            <label class="text-slate-400 text-xs font-mono font-semibold">Global Default Effort:</label>
+            <select id="global-reasoning-select" onchange="updateGlobalReasoningEffort(this.value)" class="bg-slate-900 border border-slate-800 rounded p-1 text-xs text-emerald-400 font-mono">
+              <option value="none">none (fastest / free tier)</option>
+              <option value="minimal">minimal</option>
+              <option value="low">low</option>
+              <option value="medium">medium</option>
+              <option value="high">high</option>
+              <option value="xhigh">xhigh</option>
+              <option value="max">max</option>
+              <option value="ultra">ultra (deep thought)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Explanatory Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5 font-mono text-xs">
+          <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-emerald-400 font-bold block mb-1">⚡ Fast / Low Latency</span>
+            <span class="text-slate-400 text-[11px] leading-relaxed">Levels: <strong>none</strong>, <strong>minimal</strong>. Best for live voice dialogue, interactive chat, and triage where response speed is paramount.</span>
+          </div>
+          <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-cyan-400 font-bold block mb-1">🧠 Balanced Reasoning</span>
+            <span class="text-slate-400 text-[11px] leading-relaxed">Levels: <strong>low</strong>, <strong>medium</strong>. Standard production balance for code analysis, content authoring, and multi-turn workflows.</span>
+          </div>
+          <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-purple-400 font-bold block mb-1">🔬 Deep Architecture</span>
+            <span class="text-slate-400 text-[11px] leading-relaxed">Levels: <strong>high</strong>, <strong>ultra</strong>. Maximum chain-of-thought tokens for complex architectural refactors and security audits.</span>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-400 font-mono mb-3">Model-specific reasoning override controls are also available directly on each model card in the <strong>Model Library</strong>.</p>
+        <button onclick="switchMainTab('models-library')" class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-cyan-300 font-semibold transition">
+          Browse Model Library to Configure Individual Overrides →
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- DEDICATED PAGE 7: 🧠 INTELLIGENCE & MODELS: CONTEXT METERS -->
+    <!-- ============================================================== -->

@@ -1,0 +1,121 @@
+<div id="tab-system-daemon" class="hidden flex flex-col gap-6">
+      
+      <!-- Top Overview Header -->
+      <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-rose-950/80 border border-rose-800/80 flex items-center justify-center text-lg text-rose-400 font-pixel">⚙️</span>
+            <div>
+              <h2 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+                <span>NEXUSDESK DAEMON & SERVICE MANAGER</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5 font-mono">Control the underlying background service daemon, inspect telemetry, or trigger a clean reload.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="refreshDaemonTelemetry()" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-300 text-xs font-mono flex items-center gap-1.5 transition cursor-pointer">
+              <span>🔄 Refresh Status</span>
+            </button>
+            <span id="daemon-badge-status" class="px-2.5 py-1 rounded bg-emerald-950/80 border border-emerald-800/80 text-[10px] text-emerald-300 font-mono font-semibold uppercase">
+              STATUS: ACTIVE (RUNNING)
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Action Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Card 1: Daemon Restart Control -->
+        <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+                <span>⚡</span> <span>SERVICE RELOAD & RESTART</span>
+              </h3>
+              <span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-950/90 text-rose-400 border border-rose-800 font-mono">SYSTEMD</span>
+            </div>
+
+            <div class="p-3.5 rounded-xl border flex items-center justify-between bg-slate-900/60 border-slate-800 mb-4">
+              <div>
+                <div class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold font-mono">Service Name</div>
+                <div class="text-xs font-bold text-slate-300 font-mono mt-0.5">nexusdesk.service</div>
+              </div>
+              <button id="btn-trigger-restart" onclick="confirmRestartNexusDesk()" class="px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-900/40 cursor-pointer font-mono">
+                <span>🔄 Restart NexusDesk</span>
+              </button>
+            </div>
+
+            <div class="space-y-2.5 text-xs font-mono text-slate-400 leading-relaxed mb-4">
+              <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80">
+                <span class="text-rose-400 font-semibold block mb-1">⚠️ When to Restart</span>
+                Use this button after installing new Python dependencies, modifying background system daemons, updating agent timeouts, or resolving stalled worker processes.
+              </div>
+              <div class="p-3 bg-slate-950/70 rounded-lg border border-slate-800/80">
+                <span class="text-cyan-400 font-semibold block mb-1">✨ Seamless Zero-Friction Reconnect</span>
+                The service restarts cleanly in the background via detached process. The frontend displays a brief reconnection countdown and reconnects automatically without requiring a hard browser refresh.
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-500 font-mono border-t border-slate-800/80 pt-3 flex items-center justify-between">
+            <span>Terminal Equivalent:</span>
+            <code class="text-slate-400 text-[10px] bg-slate-900 px-2 py-0.5 rounded border border-slate-800">sudo systemctl restart nexusdesk</code>
+          </div>
+        </div>
+
+        <!-- Card 2: Live Telemetry & Process Info -->
+        <div class="bg-[#161b22] border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xs font-bold text-slate-200 font-pixel flex items-center gap-2">
+                <span>📊</span> <span>DAEMON TELEMETRY</span>
+              </h3>
+              <span id="daemon-active-dot" class="flex items-center gap-1 text-[10px] text-emerald-400 font-mono">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ACTIVE
+              </span>
+            </div>
+
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3 mb-4 font-mono text-xs">
+              <div class="flex justify-between items-center py-1 border-b border-slate-900">
+                <span class="text-slate-500">Service Target:</span>
+                <span class="text-slate-300 font-bold">/etc/systemd/system/nexusdesk.service</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-900">
+                <span class="text-slate-500">Main Process PID:</span>
+                <span id="daemon-info-pid" class="text-cyan-400 font-bold font-mono">11318</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-900">
+                <span class="text-slate-500">Service Memory:</span>
+                <span id="daemon-info-mem" class="text-emerald-400 font-bold font-mono">57.9 MB</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-900">
+                <span class="text-slate-500">Daemon Started At:</span>
+                <span id="daemon-info-started" class="text-slate-300 text-[11px] truncate max-w-[200px]">Fri 2026-10-23 01:14:11</span>
+              </div>
+              <div class="flex justify-between items-center py-1">
+                <span class="text-slate-500">FastAPI Host / Port:</span>
+                <span class="text-indigo-400 font-bold font-mono">127.0.0.1:9200</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs font-mono text-slate-400 space-y-1">
+            <div class="flex justify-between">
+              <span>Instance Root:</span>
+              <span class="text-cyan-400 font-semibold truncate max-w-[240px]">/home/myvirtualcoder/nexusdesk</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Python Executable:</span>
+              <span class="text-slate-300 font-semibold truncate max-w-[240px]">/usr/local/lib/hermes-agent/venv/bin/python</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 13: 🧬 SELF-EVOLVING HUB & OBSERVABILITY (BL-SYS-21/22)     -->
+    <!-- ============================================================== -->

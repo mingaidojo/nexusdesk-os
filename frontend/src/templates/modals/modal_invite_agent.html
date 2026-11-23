@@ -1,0 +1,104 @@
+<!-- MODAL: MANAGE WAR ROOM AGENTS (ADD & REMOVE) (BL-CHAT-32 & BL-WAR-26) -->
+  <div id="modal-invite-agent" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 overflow-hidden">
+    <div class="bg-[#161b22] border border-cyan-700/80 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[85vh] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between shrink-0 bg-[#0d1117]">
+        <div class="flex items-center gap-2">
+          <span class="text-emerald-400 text-base">🤖</span>
+          <h3 class="font-bold text-white text-sm font-pixel">MANAGE AGENTS IN WAR ROOM</h3>
+        </div>
+        <button onclick="closeInviteAgentModal()" class="text-slate-400 hover:text-white text-sm font-mono cursor-pointer">✕</button>
+      </div>
+      <div class="p-4 flex flex-col gap-4 overflow-y-auto custom-scrollbar">
+        <p class="text-xs text-slate-300">Add or remove specialist agents for this conference room. Active agents can engage in discussions, round-tables, and collaborative chains.</p>
+
+        <!-- Section 0: Room Orchestrator & Dispatcher Selector (BL-WAR-42) -->
+        <div class="p-3 rounded-xl bg-slate-900/95 border border-amber-500/40 shadow-inner flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-amber-400 text-sm">👑</span>
+              <span class="text-[11px] font-mono font-bold text-amber-300 uppercase tracking-wider">Room Orchestrator & Dispatcher</span>
+            </div>
+            <span id="manage-agents-orch-badge" class="text-[8.5px] font-mono px-1.5 py-0.5 rounded font-bold uppercase bg-amber-950/80 text-amber-300 border border-amber-700/80">OVERRIDE ACTIVE</span>
+          </div>
+          <p class="text-[10px] text-slate-400 leading-relaxed">
+            Overrides the system dispatcher and agent persona. The designated orchestrator takes the floor to lead deliberations and dispatch tasks. If unhealthy, falls back to the System LLM Dispatcher and fixed rules.
+          </p>
+          <div class="flex items-center gap-2 pt-1">
+            <div class="relative flex-1 min-w-0">
+              <span class="absolute left-2.5 top-2 text-xs pointer-events-none select-none z-10">👑</span>
+              <select id="manage-agents-orch-select" onchange="changeWarRoomOrchestrator(this.value)" class="w-full pl-8 pr-2.5 py-1.5 text-xs font-mono rounded-lg bg-slate-950 border border-amber-500/60 text-amber-200 focus:border-amber-400 focus:outline-none transition cursor-pointer">
+                <option value="">Default (System Dispatcher / Solaris)</option>
+              </select>
+            </div>
+            <button type="button" onclick="clearWarRoomOrchestrator()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10.5px] font-mono transition cursor-pointer border border-slate-700 shrink-0" title="Revert to Default System Dispatcher">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 0.5: Domain Preset & Way of Working (WoW) Rules (BL-WAR-43) -->
+        <div class="p-3 rounded-xl bg-slate-900/95 border border-cyan-500/40 shadow-inner flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="text-cyan-400 text-sm">📐</span>
+              <span class="text-[11px] font-mono font-bold text-cyan-300 uppercase tracking-wider">Domain Preset & Way of Working (WoW)</span>
+            </div>
+            <span id="manage-agents-preset-badge" class="text-[8.5px] font-mono px-1.5 py-0.5 rounded font-bold uppercase bg-cyan-950/80 text-cyan-300 border border-cyan-700/80">GENERAL</span>
+          </div>
+          <p class="text-[10px] text-slate-400 leading-relaxed">
+            Shift the room lifecycle phase mid-project or customize institutional review gates and execution discipline.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            <div class="relative">
+              <label class="text-[9.5px] text-slate-400 font-mono block mb-1">Domain Preset:</label>
+              <select id="manage-agents-preset-select" onchange="onManageAgentsPresetChange(this.value)" class="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg bg-slate-950 border border-cyan-500/60 text-cyan-200 focus:border-cyan-400 focus:outline-none transition cursor-pointer">
+                <option value="general_conference">🌐 General Multi-Agent Conference</option>
+                <option value="coding_sprint">⚡ Collaborative Coding Sprint</option>
+                <option value="deep_research">🔬 Deep Multi-Perspective Research</option>
+                <option value="security_audit">🛡️ SRE & Security Red-Teaming</option>
+                <option value="executive_advisory">📊 Executive Board & Pitch Deck</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button type="button" onclick="saveRoomPresetAndWoW()" class="w-full px-3 py-1.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white text-xs font-mono font-semibold transition cursor-pointer">
+                💾 Save WoW Settings
+              </button>
+            </div>
+          </div>
+          <div class="mt-1">
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-[9.5px] text-slate-400 font-mono">Custom Room Way of Working (WoW) Rules:</label>
+              <button type="button" onclick="resetRoomWoWToPresetDefault()" class="text-[9.5px] text-cyan-400 hover:underline cursor-pointer">Restore Preset Default</button>
+            </div>
+            <textarea id="manage-agents-wow-text" rows="3" placeholder="Define custom QA review gates, Apple-grade design mandates, or peer fallback rules..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-[10.5px] font-mono text-slate-200 focus:outline-none focus:border-cyan-500 custom-scrollbar"></textarea>
+          </div>
+        </div>
+
+        <!-- Section 1: Currently In Room -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider">Active Participants (<span id="manage-agents-active-count">0</span>)</span>
+            <span class="text-[9px] font-mono text-slate-500">Min 1 agent required</span>
+          </div>
+          <div id="manage-agents-active-list" class="space-y-1.5">
+            <!-- Populated by populateInviteAgentList() -->
+          </div>
+        </div>
+
+        <div class="border-t border-slate-800"></div>
+
+        <!-- Section 2: Available from Fleet -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">Available Fleet Agents (<span id="manage-agents-available-count">0</span>)</span>
+          </div>
+          <div id="invite-agent-list" class="space-y-1.5">
+            <!-- Populated by populateInviteAgentList() -->
+          </div>
+        </div>
+      </div>
+      <div class="px-4 py-3 border-t border-slate-800 bg-[#0d1117] flex justify-end shrink-0">
+        <button onclick="closeInviteAgentModal()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition cursor-pointer">Done</button>
+      </div>
+    </div>
+  </div>
