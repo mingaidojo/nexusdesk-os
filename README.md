@@ -76,6 +76,22 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for topology and WebSocket co
 
 ---
 
+## NexusDesk OS vs. NexusDesk Cloud / Pro
+
+| Feature | NexusDesk OS (MIT) | NexusDesk Cloud / Pro |
+| :--- | :---: | :---: |
+| **5 CLI Engines** (`hermes`, `claude`, `opencode`, `codex`, `agy`) | ✅ | ✅ |
+| **AgentFloor** (2D Blueprint & Isometric Pixel Loft) | ✅ | ✅ |
+| **1-on-1 Direct Chat & Neural TTS/STT** | ✅ | ✅ |
+| **Workflows DAG, Crons & Memory/Wiki** | ✅ | ✅ |
+| **War Rooms** | `#general` + up to 3 custom rooms (3 agents/room) | **Unlimited** rooms, agents & async sandboxes |
+| **Chat Agents & WhatsApp Studio** (Baileys multi-SIM, `.xlsx` sync) | — | ✅ |
+| **Omnichannel Gateways** (WhatsApp & Telegram `/global` & `/room`) | — | ✅ |
+| **Self-Evolving Hub & Snapshot Vault** | — | ✅ |
+| **Managed Cloud Hosting, Team RBAC & Billing** | — | ✅ |
+
+---
+
 ## License
 
 Released under the [MIT License](./LICENSE).  

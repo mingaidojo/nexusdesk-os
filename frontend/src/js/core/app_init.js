@@ -259,4 +259,12 @@
           syncWarRoomMessages(undefined, true);
         }
       });
+
+      // Auto-hide sidebar nav buttons whose tab partial is not included in this edition (e.g. OSS)
+      document.querySelectorAll('.sidebar-nav-btn[data-tab]').forEach((btn) => {
+        const tabId = btn.getAttribute('data-tab');
+        if (tabId && !document.getElementById(`tab-${tabId}`)) {
+          btn.style.display = 'none';
+        }
+      });
     });
